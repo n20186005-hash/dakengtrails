@@ -1,0 +1,41 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import PageHero from '../../components/PageHero.astro';
+const title = '圖片與資料來源｜Dakeng Trails';
+const description = 'Dakeng Trails使用的大坑步道實景照片授權、攝影者、Wikimedia Commons原始檔與主要資料來源。';
+const photos = [
+  ['dakeng-1.jpg', '大坑登山步道入口', 'Dakeng Hiking Trail 大坑登山步道 - panoramio.jpg', 'https://commons.wikimedia.org/wiki/File:Dakeng_Hiking_Trail_%E5%A4%A7%E5%9D%91%E7%99%BB%E5%B1%B1%E6%AD%A5%E9%81%93_-_panoramio.jpg'],
+  ['dakeng-2.jpg', '大坑林蔭階梯', '大坑步道 Dakeng Hiking Trail - panoramio.jpg', 'https://commons.wikimedia.org/wiki/File:%E5%A4%A7%E5%9D%91%E6%AD%A5%E9%81%93_Dakeng_Hiking_Trail_-_panoramio.jpg'],
+  ['dakeng-3.jpg', '大坑山林景觀', '大坑登山步道 Dakeng Hiking Trail - panoramio.jpg', 'https://commons.wikimedia.org/wiki/File:%E5%A4%A7%E5%9D%91%E7%99%BB%E5%B1%B1%E6%AD%A5%E9%81%93_Dakeng_Hiking_Trail_-_panoramio.jpg'],
+  ['dakeng-4.jpg', '大坑木棧階梯與健行者', '大坑登山步道 Dakeng Hiking Trail - panoramio (1).jpg', 'https://commons.wikimedia.org/wiki/File:%E5%A4%A7%E5%9D%91%E7%99%BB%E5%B1%B1%E6%AD%A5%E9%81%93_Dakeng_Hiking_Trail_-_panoramio_(1).jpg'],
+  ['dakeng-5.jpg', '大坑林間木棧與岩石', '大坑登山步道 Dakeng Hiking Trail - panoramio (2).jpg', 'https://commons.wikimedia.org/wiki/File:%E5%A4%A7%E5%9D%91%E7%99%BB%E5%B1%B1%E6%AD%A5%E9%81%93_Dakeng_Hiking_Trail_-_panoramio_(2).jpg'],
+];
+---
+<BaseLayout title={title} description={description}>
+  <Breadcrumbs items={[{ label: '圖片與資料來源' }]} />
+  <PageHero eyebrow="SOURCES & CREDITS" title="圖片與資料來源" description="照片使用大坑步道實景，並保留攝影者、授權與原始檔連結；路線資料優先連回可在出發前再次確認的來源。" compact />
+  <section class="content-section">
+    <div class="shell">
+      <div class="source-intro callout">以下5張照片皆由攝影者 lienyuan lee 拍攝，來源為 Wikimedia Commons，依 CC BY 3.0 授權使用；本站進行尺寸壓縮與版面裁切。</div>
+      <div class="source-grid">
+        {photos.map(([file, alt, original, url]) => (
+          <article>
+            <img src={`/images/trails/${file}`} alt={alt} width="1800" height="1350" loading="lazy" />
+            <div><h2>{alt}</h2><p>{original}</p><p>攝影：lienyuan lee · CC BY 3.0</p><a href={url} target="_blank" rel="license noopener">查看原始檔與授權 ↗</a></div>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+  <section class="content-section alt">
+    <div class="shell">
+      <h2 class="source-heading">主要資料來源</h2>
+      <div class="source-links">
+        <a href="https://www.scenic.taichung.gov.tw/833821/833844/833845/3040068" target="_blank" rel="noopener"><strong>大坑步道通行情形</strong><span>臺中市風景區管理所 ↗</span></a>
+        <a href="https://travel.taichung.gov.tw/zh-tw/attractions/intro/419" target="_blank" rel="noopener"><strong>大坑風景區</strong><span>臺中觀光旅遊網 ↗</span></a>
+        <a href="https://developers.google.com/maps/documentation/urls/get-started" target="_blank" rel="noopener"><strong>Google Maps URLs</strong><span>Google for Developers ↗</span></a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

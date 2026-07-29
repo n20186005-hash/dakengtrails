@@ -1,0 +1,53 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import PageHero from '../../components/PageHero.astro';
+import SectionHeading from '../../components/SectionHeading.astro';
+import { trails } from '../../data/trails';
+const title = '大坑步道停車攻略｜各登山口停車場與Google Maps導航';
+const description = '整理大坑1至11號與支線步道停車便利度、入口步行提醒、經補庫停車場與Google Maps導航，假日前先準備替代方案。';
+const parkingSorted = [...trails].sort((a, b) => b.parking - a.parking);
+---
+<BaseLayout title={title} description={description}>
+  <Breadcrumbs items={[{ label: '停車攻略' }]} />
+  <PageHero eyebrow="PARKING GUIDE" title="大坑步道停車，先看入口再找車位" description="停車便利度依步道差異很大。9號與9-1號可優先查看經補庫周邊；高地步道則要為窄路與有限空間預留彈性。" image="/images/trails/dakeng-3.jpg" imageAlt="大坑山區林蔭步道與山谷" compact />
+
+  <section class="parking-feature">
+    <div class="shell parking-feature-grid">
+      <div>
+        <p class="eyebrow">START HERE</p>
+        <h2>第一次到大坑，從經補庫周邊開始最容易</h2>
+        <p>9號與9-1號入口、停車、補給和大眾運輸的關係較清楚。若是初訪或親子同行，先從這一區開始，能少掉不少找路壓力。</p>
+        <div class="action-row">
+          <a class="button" href="https://www.google.com/maps/search/?api=1&query=%E7%B6%93%E8%A3%9C%E5%BA%AB%E5%81%9C%E8%BB%8A%E5%A0%B4" target="_blank" rel="noopener">開啟經補庫停車場 ↗</a>
+          <a class="button button-secondary" href="/trails/9/">查看9號步道</a>
+        </div>
+      </div>
+      <div class="parking-rule-card">
+        <strong>假日停車原則</strong>
+        <ul>
+          <li>熱門時段提早抵達</li>
+          <li>預留從車位步行到入口的時間</li>
+          <li>不占用農路、轉彎處與居民出入口</li>
+          <li>車位不足時直接改走備選步道</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="content-section">
+    <div class="shell">
+      <SectionHeading eyebrow="BY TRAIL" title="14條步道停車便利度" text="5顆代表相對容易安排，不等於保證有空位；實際仍以現場標線、告示與交通疏導為準。" />
+      <div class="parking-list">
+        {parkingSorted.map((trail) => (
+          <article>
+            <div class="parking-id">{trail.id}</div>
+            <div><h3>{trail.name}</h3><p>{trail.parkingNote}</p></div>
+            <div class="parking-score"><span>便利度</span><strong>{'●'.repeat(trail.parking)}<i>{'●'.repeat(5 - trail.parking)}</i></strong></div>
+            <div class="parking-actions"><a href={`/trails/${trail.id}/#parking`}>詳細說明</a><a href={trail.maps.directions} target="_blank" rel="noopener">入口導航 ↗</a></div>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+</BaseLayout>

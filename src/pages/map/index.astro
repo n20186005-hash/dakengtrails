@@ -1,0 +1,49 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import PageHero from '../../components/PageHero.astro';
+import SectionHeading from '../../components/SectionHeading.astro';
+import { trails } from '../../data/trails';
+const title = '大坑步道地圖與入口｜14條步道Google Maps導航';
+const description = '整理大坑14條登山步道入口、Google Maps地點與導航連結，避免只導航大坑風景區而抵達錯誤入口。';
+---
+<BaseLayout title={title} description={description}>
+  <Breadcrumbs items={[{ label: '地圖導航' }]} />
+  <PageHero eyebrow="MAP & ENTRANCES" title="先選步道，再導航正確入口" description="大坑不是單一入口。每條步道分布在不同山區道路與停車點，請先確認編號，再開啟具體地點。" image="/images/trails/dakeng-1.jpg" imageAlt="大坑6號步道入口木牌與山區道路" compact />
+
+  <section class="map-page-section">
+    <div class="shell map-page-grid">
+      <div class="map-page-frame">
+        <iframe title="臺中大坑風景區 Google 地圖" src="https://www.google.com/maps?q=%E5%A4%A7%E5%9D%91%E9%A2%A8%E6%99%AF%E5%8D%80&output=embed" width="740" height="690" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+      </div>
+      <div class="location-list">
+        <div class="location-list-head">
+          <p class="eyebrow">14 TRAILHEADS</p>
+          <h2>步道入口清單</h2>
+          <p>「開啟地點」用來確認位置；「開始導航」會交給 Google Maps 規劃行車路線。</p>
+        </div>
+        <div class="location-items">
+          {trails.map((trail) => (
+            <div class="location-item">
+              <span>{trail.id}</span>
+              <div><strong>{trail.name}</strong><small>{trail.difficulty} · 約{trail.duration[0]}–{trail.duration[1]}分鐘</small></div>
+              <a href={trail.maps.place} target="_blank" rel="noopener">地點 ↗</a>
+              <a href={trail.maps.directions} target="_blank" rel="noopener">導航 ↗</a>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="content-section alt">
+    <div class="shell">
+      <SectionHeading eyebrow="DON'T GET LOST" title="三個容易導航錯的原因" />
+      <div class="info-grid">
+        <div class="info-card"><span class="icon-circle">1</span><h3>只輸入大坑風景區</h3><p>搜尋結果可能是區域中心，不是你要走的登山口。務必加上步道編號。</p></div>
+        <div class="info-card"><span class="icon-circle">2</span><h3>停車場不等於入口</h3><p>停好車後常需步行一段道路。下車前先看現場指標與回程方向。</p></div>
+        <div class="info-card"><span class="icon-circle">3</span><h3>山區支線相似</h3><p>最後一段可能有農路或岔路。不要只靠手機藍點，應對照步道牌面。</p></div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

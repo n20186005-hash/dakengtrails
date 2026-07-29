@@ -1,0 +1,27 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import PageHero from '../../components/PageHero.astro';
+const title = '編輯原則｜Dakeng Trails 大坑步道指南';
+const description = '說明Dakeng Trails的資料來源、時間與難度呈現、變動資訊處理、圖片授權、Google Maps使用與內容更新原則。';
+---
+<BaseLayout title={title} description={description}>
+  <Breadcrumbs items={[{ label: '編輯原則' }]} />
+  <PageHero eyebrow="EDITORIAL POLICY" title="資訊要能幫助決定，也要誠實面對變動" description="我們把穩定資料整理成比較工具，把會快速變動的狀態交給出發當日的公告與地圖。" compact />
+  <section class="content-section">
+    <article class="shell prose policy-prose">
+      <h2>資料來源優先順序</h2>
+      <p>路線、交通與通行資訊優先參考臺中市風景區管理所、臺中觀光旅遊網、Google Maps 使用說明與現場可驗證資訊。頁面會連回適合在出發當日再次確認的來源。</p>
+      <h2>距離、時間與難度</h2>
+      <p>步道距離與海拔以約數呈現；建議時間使用區間，不承諾每個人都能在相同時間完成。難度同時考慮坡度、圓木與階梯、爬升、曝曬、折返與交通，而不只使用單一級別。</p>
+      <h2>不固定保存的資訊</h2>
+      <p>網站不把 Google 評分、評論數、即時人潮、即時停車空位或固定開放狀態寫入步道資料。這些內容變動快，應在出發當日向原始服務確認。</p>
+      <h2>圖片與授權</h2>
+      <p>網站使用大坑步道實景且具清楚授權來源的照片；攝影者、授權條款與原始檔連結收錄於<a href="/sources/">圖片與資料來源</a>。</p>
+      <h2>Google Maps</h2>
+      <p>地圖用於開啟地點、規劃路線與嵌入定位。不擷取評論、不下載使用者相片、不把地圖截圖重新製作成站內地圖。</p>
+      <h2>安全與現場狀況</h2>
+      <p>步道可能因施工、天候或現場狀況臨時管制。所有頁面提供的內容都應與當日公告、現場告示及個人身體狀況一起判斷。</p>
+    </article>
+  </section>
+</BaseLayout>

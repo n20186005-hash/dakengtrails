@@ -1,0 +1,66 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import PageHero from '../../components/PageHero.astro';
+const title = '大坑步道常見問題｜難度、親子、停車、雨天與裝備';
+const description = '回答大坑步道哪條最簡單、第一次走哪條、能否帶小孩、圓木步道、停車、公車、雨天與鞋子等常見問題。';
+const groups = [
+  {
+    title: '選步道',
+    items: [
+      ['大坑步道哪一條最簡單？', '9-1號距離短、交通與補給相對方便；8號也是短程入門選擇。即使標示親子級，仍有階梯與坡度。'],
+      ['第一次去大坑走哪一條？', '優先看9號或9-1號。入口、停車、大眾運輸與補給較容易掌握，也能依體力彈性折返。'],
+      ['哪條最有挑戰？', '4號與高地串連路線的爬升、稜線與回程體力要求較高；2、3號圓木坡也需要平衡與腿力。'],
+      ['哪條有經典圓木棧道？', '1至5號一帶能體驗大坑代表性的圓木路面，其中2、3、4號挑戰感較明顯。'],
+    ],
+  },
+  {
+    title: '親子與長輩',
+    items: [
+      ['大坑步道可以帶小孩嗎？', '可以，建議從9-1、8、7或9號開始。成人需全程陪同，並以孩子平時活動量與階梯能力評估。'],
+      ['可以推嬰兒車嗎？', '多數步道有階梯、坡度與不平路面，不適合推嬰兒車。'],
+      ['長輩適合哪條？', '可優先考慮9-1或8號，安排更多休息並避免雨後。膝踝狀況不佳者應先諮詢專業意見。'],
+      ['步道都有廁所嗎？', '各入口與周邊設施不同，不應假設沿途一定有廁所。出發前先在交通節點處理，並查看個別步道頁。'],
+    ],
+  },
+  {
+    title: '交通與停車',
+    items: [
+      ['大坑步道停車方便嗎？', '9、9-1號可優先查看經補庫停車場；高地步道周邊空間較有限。假日應提早並準備備選路線。'],
+      ['沒有開車怎麼去？', '可從臺鐵或捷運松竹站一帶轉乘往大坑方向公車。9、9-1與10號相對容易安排。'],
+      ['為什麼不能只導航大坑風景區？', '大坑有14條步道、入口分散。只輸入區域名稱可能抵達與目標步道不同的位置。'],
+      ['機車可以停登山口嗎？', '仍須依現場標線與告示，不可占用農路、轉彎處、居民出入口或救援通道。'],
+    ],
+  },
+  {
+    title: '安全與裝備',
+    items: [
+      ['需要穿登山鞋嗎？', '入門路線可穿抓地力良好的運動鞋；圓木、陡坡與雨後路面更建議穿包覆與抓地穩定的登山鞋。'],
+      ['下雨後適合走嗎？', '圓木、岩面、落葉與階梯雨後更滑。若仍有降雨、豪雨後或發布管制，應改期。'],
+      ['需要帶登山杖嗎？', '不是每條都需要。會使用者可在陡坡與下坡分擔負擔；第一次使用不要直接挑戰最難路線。'],
+      ['可以帶寵物嗎？', '需依現場規範並全程控制，避免追逐野生動物、影響其他健行者或接近陡坡。'],
+    ],
+  },
+];
+const all = groups.flatMap((group) => group.items);
+const schema = {
+  '@context': 'https://schema.org', '@type': 'FAQPage',
+  mainEntity: all.map(([question, answer]) => ({ '@type': 'Question', name: question, acceptedAnswer: { '@type': 'Answer', text: answer } })),
+};
+---
+<BaseLayout title={title} description={description} schema={schema}>
+  <Breadcrumbs items={[{ label: '常見問題' }]} />
+  <PageHero eyebrow="FAQ" title="規劃大坑步道，先把這些問題弄清楚" description="直接回答選路線、親子、停車、公車、雨天與裝備問題；需要細節時再前往個別步道頁。" compact />
+  <section class="content-section">
+    <div class="shell faq-page-grid">
+      {groups.map((group) => (
+        <section>
+          <h2>{group.title}</h2>
+          <div class="faq-list">
+            {group.items.map(([question, answer]) => <details><summary>{question}</summary><div>{answer}</div></details>)}
+          </div>
+        </section>
+      ))}
+    </div>
+  </section>
+</BaseLayout>

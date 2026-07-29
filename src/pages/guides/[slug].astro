@@ -1,0 +1,89 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import SectionHeading from '../../components/SectionHeading.astro';
+import TrailCard from '../../components/TrailCard.astro';
+import { guides } from '../../data/content';
+import { trails } from '../../data/trails';
+export function getStaticPaths() {
+  return guides.map((guide) => ({ params: { slug: guide.slug }, props: { guide } }));
+}
+const { guide } = Astro.props;
+const guideContent: Record<string, { lead: string; sections: [string, string][]; picks: string[] }> = {
+  'what-to-bring': {
+    lead: '大坑是城市近郊山區，裝備不用複雜，但鞋子、飲水、通行資訊與折返時間不能省略。',
+    sections: [
+      ['鞋子怎麼選？', '選有明顯鞋紋、包覆穩定的運動鞋或登山鞋。要走圓木與陡坡時，平底休閒鞋的抓地力不足。'],
+      ['水與食物帶多少？', '依天氣、時間與個人流汗量準備飲水。短程也要帶水；高溫時可補充電解質，但不要依賴步道上一定有補給。'],
+      ['手機要準備什麼？', '先開啟入口、停車與回程站牌，截圖關鍵資訊。山區訊號不穩時，仍能查看事先保存的內容。'],
+      ['怎麼設定折返時間？', '用預計回到入口的時間往回推，保留至少三分之一體力下山。天色、天候或同行者狀況變差就提前回程。'],
+    ], picks: ['9', '7', '6'],
+  },
+  'rainy-day': {
+    lead: '雨後不是只有泥濘問題；圓木、岩面、落葉與階梯邊緣都會降低摩擦，能見度與山區道路也可能受影響。',
+    sections: [
+      ['什麼情況應該改期？', '仍在降雨、豪雨後、官方發布管制，或同行者沒有防滑鞋與雨天經驗時，改期是更合理的選擇。'],
+      ['圓木為什麼特別滑？', '圓木表面濕潤後抓地力快速下降，不規則間距也讓落腳更難；下坡時風險通常比上坡高。'],
+      ['如果只是短暫小雨？', '先查看雷達、通行情形與現場告示。即使選入門步道，也不要在雷雨或強風預警下進入。'],
+      ['有哪些替代安排？', '可改為大坑商圈用餐、安排室內景點，或把行程換到天候穩定的日期，不需要為了既定計畫勉強上山。'],
+    ], picks: ['9-1', '8', '9'],
+  },
+  'summer-hiking': {
+    lead: '夏季大坑悶熱且部分路段曝曬，提早出發、縮短路線與主動補水，比追求走完全程更重要。',
+    sections: [
+      ['幾點出發比較合適？', '盡量避開接近正午的高溫時段，並依日落時間設定最晚折返。'],
+      ['怎麼避免熱不適？', '少量多次補水、穿透氣衣物、在陰影處休息。頭暈、噁心、異常疲憊時要立即停止前進。'],
+      ['哪種路線比較合適？', '選林蔭較多、時間可控且容易折返的路線，例如7、8或9號，再依現場溫度縮短。'],
+      ['防曬與防蚊怎麼做？', '帽子、袖套或透氣長袖能減少曝曬；防蚊用品依說明使用，流汗後視需要補擦。'],
+    ], picks: ['8', '7', '9'],
+  },
+  'log-stairs-safety': {
+    lead: '大坑圓木步道的特色也正是難點：表面圓、間距不一、下坡衝擊明顯，雨後更需要保守。',
+    sections: [
+      ['落腳點怎麼選？', '腳掌盡量踩在圓木中央或穩定位置，避免跨太大步；保持三點平衡，不急著跟上前方速度。'],
+      ['下坡重心怎麼控制？', '縮短步幅、降低速度，重心保持在腳掌上方。若有扶手或繩索，先確認穩固再輔助。'],
+      ['登山杖一定需要嗎？', '不是每個人都需要，但會使用者可用來分擔下坡衝擊。第一次使用不要直接拿去走最陡圓木段。'],
+      ['誰不適合直接挑戰？', '膝踝不穩、懼高、平衡感差或完全沒有山徑經驗者，建議先走9號等入門路線。'],
+    ], picks: ['2', '3', '4'],
+  },
+  'hiking-with-children': {
+    lead: '判斷孩子能不能走，不只看年齡；平時活動量、階梯能力、是否願意折返與成人照顧比例更重要。',
+    sections: [
+      ['第一次帶孩子選哪條？', '優先看9-1、8、7或9號。先選容易折返的短線，完成後再決定下次是否增加距離。'],
+      ['可以推嬰兒車嗎？', '多數大坑步道有階梯、坡度或不平路面，不適合推嬰兒車。'],
+      ['需要準備哪些東西？', '孩子自己的飲水、簡單食物、帽子、防蚊、防曬與備用衣物；成人也要保留體力協助。'],
+      ['什麼時候該折返？', '孩子開始拖步、注意力下降、抱怨頭暈或天候變差時就折返，不以抵達某個點為必要目標。'],
+    ], picks: ['9-1', '8', '7'],
+  },
+};
+const content = guideContent[guide.slug];
+const selected = content.picks.map((id) => trails.find((trail) => trail.id === id)).filter(Boolean);
+const title = `${guide.title}｜大坑步道指南`;
+const description = guide.description;
+const articleSchema = {
+  '@context': 'https://schema.org', '@type': 'Article', headline: guide.title,
+  description, inLanguage: 'zh-Hant-TW', image: 'https://dakengtrails.com/images/trails/dakeng-5.jpg',
+  mainEntityOfPage: `https://dakengtrails.com/guides/${guide.slug}/`,
+};
+---
+<BaseLayout title={title} description={description} schema={articleSchema}>
+  <Breadcrumbs items={[{ label: '行前準備', href: '/guides/' }, { label: guide.title }]} />
+  <section class="article-hero">
+    <div class="shell article-hero-grid">
+      <div><p class="eyebrow">TRAIL GUIDE</p><h1>{guide.title}</h1><p>{content.lead}</p></div>
+      <figure><img src="/images/trails/dakeng-5.jpg" alt="大坑山林岩面與木棧步道" width="1800" height="1350" fetchpriority="high" /></figure>
+    </div>
+  </section>
+  <section class="content-section">
+    <article class="shell prose article-prose">
+      <div class="callout">先查看當日天候與步道通行情形；任何指南都不能取代現場管制與個人身體狀況判斷。</div>
+      {content.sections.map(([heading, text]) => <section><h2>{heading}</h2><p>{text}</p></section>)}
+    </article>
+  </section>
+  <section class="content-section alt">
+    <div class="shell">
+      <SectionHeading eyebrow="RELATED TRAILS" title="搭配這幾條步道看" />
+      <div class="trail-grid">{selected.map((trail) => trail && <TrailCard trail={trail} />)}</div>
+    </div>
+  </section>
+</BaseLayout>

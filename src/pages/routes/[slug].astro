@@ -1,0 +1,53 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import TrailCard from '../../components/TrailCard.astro';
+import SectionHeading from '../../components/SectionHeading.astro';
+import { routeGuides } from '../../data/content';
+import { trails } from '../../data/trails';
+export function getStaticPaths() {
+  return routeGuides.map((route) => ({ params: { slug: route.slug }, props: { route } }));
+}
+const { route } = Astro.props;
+const selected = route.trails.map((id: string) => trails.find((trail) => trail.id === id)).filter(Boolean);
+const title = `${route.title}｜大坑步道路線與時間安排`;
+const description = `${route.description} 整理建議步道、時間線、交通與出發前注意事項。`;
+---
+<BaseLayout title={title} description={description}>
+  <Breadcrumbs items={[{ label: '路線推薦', href: '/routes/' }, { label: route.title }]} />
+  <section class="route-detail-hero">
+    <div class="shell">
+      <p class="eyebrow">{route.kicker}</p>
+      <h1>{route.title}</h1>
+      <p>{route.description}</p>
+      <div class="route-detail-tags"><span>建議時間：約 {route.minutes} 分鐘</span>{route.audience.map((item: string) => <span>{item}</span>)}</div>
+    </div>
+  </section>
+
+  <section class="content-section route-plan-section">
+    <div class="shell route-plan-grid">
+      <div>
+        <SectionHeading eyebrow="SIMPLE PLAN" title="建議時間線" />
+        <ol class="plan-timeline">
+          <li><span>1</span><div><strong>抵達與確認入口</strong><p>預留停車或下車後步行時間，先看現場通行情形與回程方向。</p></div></li>
+          <li><span>2</span><div><strong>完成主要步道</strong><p>以最慢同行者的速度前進，在預定折返時間前決定是否續走。</p></div></li>
+          <li><span>3</span><div><strong>休息與補水</strong><p>離開步道前補充水分、檢查裝備與同行者狀況。</p></div></li>
+          <li><span>4</span><div><strong>周邊用餐或返程</strong><p>先回到交通節點，再安排大坑商圈、溫泉或新社順遊。</p></div></li>
+        </ol>
+      </div>
+      <aside class="plan-note">
+        <p class="eyebrow">DECISION RULE</p>
+        <h2>保留一條備選路線</h2>
+        <p>遇到停車客滿、步道管制或同行者臨時狀況時，直接換到相近難度的備案，不勉強進入。</p>
+        <a href="/compare/">比較全部步道 →</a>
+      </aside>
+    </div>
+  </section>
+
+  <section class="content-section alt">
+    <div class="shell">
+      <SectionHeading eyebrow="TRAIL OPTIONS" title="這個情境優先比較" text="實際選一條即可；若要組合，請把總時間、爬升與兩端交通一起計算。" />
+      <div class="trail-grid">{selected.map((trail) => trail && <TrailCard trail={trail} />)}</div>
+    </div>
+  </section>
+</BaseLayout>

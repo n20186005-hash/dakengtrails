@@ -1,0 +1,43 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import PageHero from '../../components/PageHero.astro';
+import SectionHeading from '../../components/SectionHeading.astro';
+const title = '關於Dakeng Trails｜大坑步道指南';
+const description = 'Dakeng Trails 把臺中大坑14條登山步道整理成好用的選擇、比較、停車、交通與Google Maps導航工具。';
+---
+<BaseLayout title={title} description={description}>
+  <Breadcrumbs items={[{ label: '關於本站' }]} />
+  <PageHero eyebrow="ABOUT DAKENG TRAILS" title="不是把內容寫得更長，而是讓決定更簡單" description="選哪條、難不難、停哪裡、入口在哪裡，以及如何直接出發——這是本站優先解決的五件事。" image="/images/trails/dakeng-4.jpg" imageAlt="健行者走在大坑木棧道上" compact />
+  <section class="content-section">
+    <div class="shell about-grid">
+      <article class="prose">
+        <h2>為什麼需要一個大坑步道選擇工具？</h2>
+        <p>大坑不是只有一條步道。1號至11號，加上3-1、5-1與9-1號，共14條路線分布在不同入口；路面、坡度、停車與適合客群也不相同。</p>
+        <p>因此本站不以「大坑風景區介紹」為終點，而是從實際出發流程整理內容：先選步道，再確認入口、停車或公車，最後開啟導航。</p>
+        <h2>內容怎麼設計？</h2>
+        <p>每一頁先回答最重要的問題，再補充路面、體力、交通與注意事項。距離與時間用約數呈現，不把可能快速變動的評分、人潮、停車空位或開放狀態寫成永久資料。</p>
+        <h2>品牌名稱</h2>
+        <p><strong>Dakeng Trails｜大坑步道指南</strong></p>
+        <p>品牌標語是「選對步道，找到入口，直接出發。」</p>
+      </article>
+      <aside class="about-values">
+        <p class="eyebrow">OUR PRIORITIES</p>
+        <div><span>01</span><strong>先回答問題</strong><small>不繞圈、不堆空泛形容詞</small></div>
+        <div><span>02</span><strong>方便比較</strong><small>同一頁看難度、時間與交通</small></div>
+        <div><span>03</span><strong>可以出發</strong><small>每條步道都有具體地圖操作</small></div>
+        <div><span>04</span><strong>保留彈性</strong><small>提醒現場狀況與備選路線</small></div>
+      </aside>
+    </div>
+  </section>
+  <section class="content-section alt">
+    <div class="shell">
+      <SectionHeading eyebrow="START EXPLORING" title="從你的需求開始" />
+      <div class="info-grid">
+        <div class="info-card"><span class="icon-circle">選</span><h3>我不知道走哪條</h3><p>用四個問題，從14條步道中找出三個候選。</p><a href="/#trail-finder">使用步道選擇器 →</a></div>
+        <div class="info-card"><span class="icon-circle">比</span><h3>我想直接比較</h3><p>把難度、時間、路面、親子與交通放在一起看。</p><a href="/compare/">開啟比較表 →</a></div>
+        <div class="info-card"><span class="icon-circle">走</span><h3>我已經選好步道</h3><p>確認入口、停車與導航，查看出發前提醒。</p><a href="/map/">查看入口地圖 →</a></div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

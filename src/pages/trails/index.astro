@@ -1,0 +1,162 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import PageHero from '../../components/PageHero.astro';
+import TrailCard from '../../components/TrailCard.astro';
+import { trails } from '../../data/trails';
+
+const title = '大坑步道總覽｜14條路線特色、難度與時間比較';
+const description = '查看臺中大坑1至11號、3-1、5-1與9-1號共14條步道，依難度、時間、親子適合度、圓木路面與交通條件快速篩選。';
+---
+<BaseLayout title={title} description={description}>
+  <Breadcrumbs items={[{ label: '大坑步道' }]} />
+  <PageHero
+    eyebrow="ALL 14 TRAILS"
+    title="大坑14條步道總覽"
+    description="每一條的入口、路面與難度都不同。先用篩選器縮小選項，再查看完整攻略與導航。"
+    image="/images/trails/dakeng-2.jpg"
+    imageAlt="綠樹包圍的大坑步道與階梯"
+    compact
+  />
+
+  <section class="trails-browser">
+    <div class="shell">
+      <form class="filter-toolbar" data-trail-filters>
+        <div>
+          <label for="difficulty">難度</label>
+          <select id="difficulty" name="difficulty">
+            <option value="">全部難度</option>
+            <option value="親子">親子</option>
+            <option value="入門">入門</option>
+            <option value="中等">中等</option>
+            <option value="進階">進階</option>
+            <option value="挑戰">挑戰</option>
+          </select>
+        </div>
+        <div>
+          <label for="audience">同行者</label>
+          <select id="audience" name="audience">
+            <option value="">不限</option>
+            <option value="親子">帶小孩</option>
+            <option value="新手">登山新手</option>
+            <option value="朋友同行">朋友同行</option>
+            <option value="健腳者">健腳者</option>
+          </select>
+        </div>
+        <div>
+          <label for="feature">路線特色</label>
+          <select id="feature" name="feature">
+            <option value="">不限</option>
+            <option value="圓木">圓木路面</option>
+            <option value="城市景觀">城市景觀</option>
+            <option value="山林">山林</option>
+            <option value="短程">短程</option>
+          </select>
+        </div>
+        <div>
+          <label for="time">最長時間</label>
+          <select id="time" name="time">
+            <option value="999">不限</option>
+            <option value="60">1小時內</option>
+            <option value="120">2小時內</option>
+            <option value="240">4小時內</option>
+          </select>
+        </div>
+        <div>
+          <label for="sort">排序</label>
+          <select id="sort" name="sort">
+            <option value="default">步道編號</option>
+            <option value="family">最適合親子</option>
+            <option value="duration">時間最短</option>
+            <option value="parking">停車最方便</option>
+            <option value="difficulty">挑戰度最高</option>
+          </select>
+        </div>
+        <button class="filter-reset" type="reset">重設</button>
+      </form>
+
+      <div class="results-meta">
+        <p>找到 <strong data-result-count>{trails.length}</strong> 條步道</p>
+        <p>資料以「約」呈現；實際時間會受體力、停留與路況影響。</p>
+      </div>
+
+      <div class="trail-grid" data-trail-list>
+        {trails.map((trail, index) => (
+          <div
+            data-browser-item
+            data-index={index}
+            data-difficulty={trail.difficulty}
+            data-rank={({ 親子: 1, 入門: 2, 中等: 3, 進階: 4, 挑戰: 5 } as Record<string, number>)[trail.difficulty]}
+            data-family={trail.family}
+            data-duration={trail.duration[1]}
+            data-parking={trail.parking}
+            data-audience={trail.suitable.join(',')}
+            data-feature={`${trail.features.join(',')},${trail.surfaces.join(',')}`}
+          >
+            <TrailCard trail={trail} />
+          </div>
+        ))}
+      </div>
+      <div class="empty-state" data-empty-state>
+        <h3>目前條件沒有完全符合的路線</h3>
+        <p>放寬時間或同行者條件，再看看其他步道。</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="content-section alt">
+    <div class="shell">
+      <div class="cta-panel">
+        <div>
+          <h2>還不知道怎麼選？</h2>
+          <p>用情境路線或完整比較表，把同行者、時間、路面與交通一起看。</p>
+        </div>
+        <div class="cta-actions">
+          <a class="button button-light" href="/#trail-finder">使用步道選擇器</a>
+          <a class="button button-secondary button-on-dark" href="/compare/">查看比較表</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    const form = document.querySelector<HTMLFormElement>('[data-trail-filters]');
+    const list = document.querySelector<HTMLElement>('[data-trail-list]');
+    const items = Array.from(document.querySelectorAll<HTMLElement>('[data-browser-item]'));
+    const count = document.querySelector<HTMLElement>('[data-result-count]');
+    const empty = document.querySelector<HTMLElement>('[data-empty-state]');
+
+    const update = () => {
+      if (!form || !list) return;
+      const data = new FormData(form);
+      const difficulty = String(data.get('difficulty') ?? '');
+      const audience = String(data.get('audience') ?? '');
+      const feature = String(data.get('feature') ?? '');
+      const time = Number(data.get('time') ?? 999);
+      const sort = String(data.get('sort') ?? 'default');
+
+      const visible = items.filter((item) => {
+        const matches = (!difficulty || item.dataset.difficulty === difficulty)
+          && (!audience || (item.dataset.audience ?? '').includes(audience))
+          && (!feature || (item.dataset.feature ?? '').includes(feature))
+          && Number(item.dataset.duration ?? 999) <= time;
+        item.hidden = !matches;
+        return matches;
+      });
+
+      const sorted = [...visible].sort((a, b) => {
+        if (sort === 'family') return Number(b.dataset.family) - Number(a.dataset.family);
+        if (sort === 'duration') return Number(a.dataset.duration) - Number(b.dataset.duration);
+        if (sort === 'parking') return Number(b.dataset.parking) - Number(a.dataset.parking);
+        if (sort === 'difficulty') return Number(b.dataset.rank) - Number(a.dataset.rank);
+        return Number(a.dataset.index) - Number(b.dataset.index);
+      });
+      sorted.forEach((item) => list.append(item));
+      if (count) count.textContent = String(visible.length);
+      if (empty) empty.style.display = visible.length ? 'none' : 'block';
+    };
+
+    form?.addEventListener('change', update);
+    form?.addEventListener('reset', () => requestAnimationFrame(update));
+  </script>
+</BaseLayout>

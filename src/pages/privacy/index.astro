@@ -1,0 +1,25 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import PageHero from '../../components/PageHero.astro';
+const title = '隱私政策｜Dakeng Trails 大坑步道指南';
+const description = '說明Dakeng Trails網站的資料處理、外部連結、嵌入地圖、瀏覽器端篩選與隱私保護原則。';
+---
+<BaseLayout title={title} description={description}>
+  <Breadcrumbs items={[{ label: '隱私政策' }]} />
+  <PageHero eyebrow="PRIVACY" title="隱私政策" description="本站以純靜態方式提供步道內容與瀏覽器端篩選，以下說明可能涉及的資料與外部服務。" compact />
+  <section class="content-section">
+    <article class="shell prose policy-prose">
+      <h2>瀏覽器端篩選</h2>
+      <p>首頁步道選擇器與總覽篩選在你的瀏覽器中執行，不需要建立帳號，也不會把選項送到本站資料庫。</p>
+      <h2>外部連結</h2>
+      <p>點擊 Google Maps、臺中市風景區管理所、臺中公車或其他外部網站後，將適用該服務的隱私與使用條款。</p>
+      <h2>嵌入地圖</h2>
+      <p>部分頁面使用 Google Maps 嵌入地圖，載入時可能由 Google 依其政策處理技術資訊。地圖採延遲載入，並不在本站要求定位權限。</p>
+      <h2>Cookie 與分析</h2>
+      <p>網站核心功能不依賴會員、購物車或個人化 Cookie。本站使用 Google Analytics 4（GA4）了解頁面瀏覽、裝置類型與流量來源等彙總使用情形；Google 可能透過 Cookie 或類似技術處理瀏覽器、裝置與互動資料。相關資料將依 <a href="https://policies.google.com/privacy?hl=zh-TW" target="_blank" rel="noopener noreferrer">Google 隱私權政策</a>處理。</p>
+      <h2>政策更新</h2>
+      <p>功能或外部服務調整時，本頁內容可能更新。最新版本以本頁顯示為準。</p>
+    </article>
+  </section>
+</BaseLayout>

@@ -1,0 +1,62 @@
+---
+interface Props { path: string }
+const { path } = Astro.props;
+
+const items = [
+  ['/trails/', '步道總覽'],
+  ['/compare/', '步道比較'],
+  ['/routes/', '路線推薦'],
+  ['/map/', '地圖導航'],
+  ['/parking/', '停車交通'],
+  ['/guides/', '行前準備'],
+  ['/nearby/', '周邊玩法'],
+];
+const isActive = (href: string) => href !== '/' && path.startsWith(href);
+---
+
+<aside class="notice-bar" aria-label="步道提醒">
+  <div class="shell notice-inner">
+    <span><strong>出發前提醒</strong>　步道可能因施工、豪雨或現場狀況臨時管制。</span>
+    <a href="https://www.scenic.taichung.gov.tw/833821/833844/833845/3040068" target="_blank" rel="noopener">
+      查看通行情形
+      <span aria-hidden="true">↗</span>
+    </a>
+  </div>
+</aside>
+
+<header class="site-header">
+  <div class="shell header-inner">
+    <a class="brand" href="/" aria-label="Dakeng Trails 大坑步道指南首頁">
+      <span class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 48 48" role="img">
+          <path d="M7 34 17 18l7 9 6-11 11 18H7Z" />
+          <path d="M9 38c10-7 20-8 30-3" />
+        </svg>
+      </span>
+      <span>
+        <strong>Dakeng Trails</strong>
+        <small>大坑步道指南</small>
+      </span>
+    </a>
+
+    <nav class="desktop-nav" aria-label="主要選單">
+      {items.map(([href, label]) => (
+        <a href={href} class:list={{ active: isActive(href) }}>{label}</a>
+      ))}
+    </nav>
+
+    <a class="button button-small header-cta" href="/#trail-finder">選擇步道</a>
+
+    <details class="mobile-menu">
+      <summary aria-label="開啟網站選單">
+        <span></span><span></span><span></span>
+      </summary>
+      <nav aria-label="手機選單">
+        {items.map(([href, label]) => (
+          <a href={href} class:list={{ active: isActive(href) }}>{label}<span aria-hidden="true">→</span></a>
+        ))}
+        <a class="button" href="/#trail-finder">選擇適合我的步道</a>
+      </nav>
+    </details>
+  </div>
+</header>

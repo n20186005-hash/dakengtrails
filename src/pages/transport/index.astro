@@ -1,0 +1,48 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import PageHero from '../../components/PageHero.astro';
+import SectionHeading from '../../components/SectionHeading.astro';
+import TrailCard from '../../components/TrailCard.astro';
+import { trails } from '../../data/trails';
+const title = '大坑步道怎麼去｜公車、捷運松竹站轉乘與自駕交通';
+const description = '整理從臺鐵與捷運松竹站前往大坑步道的公車轉乘、自駕、下車後步行與回程注意事項，並推薦無車較方便的步道。';
+const transitTrails = [...trails].sort((a, b) => b.transit - a.transit).slice(0, 3);
+---
+<BaseLayout title={title} description={description}>
+  <Breadcrumbs items={[{ label: '大眾運輸' }]} />
+  <PageHero eyebrow="GETTING THERE" title="沒有開車，也能安排大坑健行" description="以臺鐵／捷運松竹站作為轉乘節點，再接往大坑方向公車。先選交通較友善的步道，回程會輕鬆很多。" image="/images/trails/dakeng-2.jpg" imageAlt="大坑林蔭緩坡與階梯步道" compact />
+
+  <section class="transport-flow">
+    <div class="shell">
+      <SectionHeading eyebrow="FROM THE CITY" title="松竹站到大坑，四步驟規劃" />
+      <ol class="transport-steps">
+        <li><span>01</span><div><strong>抵達松竹站</strong><p>臺鐵松竹站與捷運松竹站可作為市區轉乘節點。</p></div></li>
+        <li><span>02</span><div><strong>查詢即時公車</strong><p>在出發當日確認路線、站牌、班距與末班車，不把固定班次寫死。</p></div></li>
+        <li><span>03</span><div><strong>下車後找入口</strong><p>站牌通常不是登山口，請預留步行時間並對照現場指標。</p></div></li>
+        <li><span>04</span><div><strong>先設定回程時間</strong><p>進入步道前確認回程站牌與班次，避免下山後久候。</p></div></li>
+      </ol>
+      <div class="transport-actions">
+        <a class="button" href="https://www.google.com/maps/dir/?api=1&origin=%E6%9D%BE%E7%AB%B9%E8%BB%8A%E7%AB%99&destination=%E5%A4%A7%E5%9D%919%E8%99%9F%E7%99%BB%E5%B1%B1%E6%AD%A5%E9%81%93&travelmode=transit" target="_blank" rel="noopener">用 Google Maps 規劃大眾運輸 ↗</a>
+        <a class="button button-secondary" href="https://citybus.taichung.gov.tw/" target="_blank" rel="noopener">查看臺中公車即時資訊 ↗</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="content-section alt">
+    <div class="shell">
+      <SectionHeading eyebrow="BEST BY TRANSIT" title="無車優先比較這三條" text="以入口辨識、下車後步行、周邊補給與回程安排的相對便利度排序。" />
+      <div class="trail-grid">{transitTrails.map((trail) => <TrailCard trail={trail} />)}</div>
+    </div>
+  </section>
+
+  <section class="content-section">
+    <div class="shell">
+      <div class="info-grid">
+        <div class="info-card"><span class="icon-circle">↗</span><h3>自駕</h3><p>先決定步道，再導航具體入口；山區道路窄，假日預留會車與停車時間。</p><a href="/parking/">查看停車攻略 →</a></div>
+        <div class="info-card"><span class="icon-circle">公</span><h3>公車</h3><p>路線與班次可能調整，以出發當日即時資訊為準，先存回程站牌。</p><a href="/trails/">依交通篩選步道 →</a></div>
+        <div class="info-card"><span class="icon-circle">機</span><h3>機車</h3><p>停放仍須依現場標線與告示；不要占用步道口、農路或救援通道。</p><a href="/map/">查看入口地圖 →</a></div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

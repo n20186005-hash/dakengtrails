@@ -1,0 +1,56 @@
+---
+import type { Trail } from '../data/trails';
+interface Props { trail: Trail; priority?: boolean; reason?: string }
+const { trail, priority = false, reason } = Astro.props;
+const difficultyIcons: Record<string, string> = {
+  親子: '●', 入門: '▲', 中等: '▲▲', 進階: '▲▲▲', 挑戰: '↗',
+};
+---
+<article
+  class="trail-card"
+  data-trail-card
+  data-id={trail.id}
+  data-difficulty={trail.difficulty}
+  data-family={trail.family}
+  data-duration={trail.duration[1]}
+  data-transit={trail.transit}
+  data-parking={trail.parking}
+  data-features={trail.features.join(',')}
+  data-suitable={trail.suitable.join(',')}
+>
+  <a class="trail-card-image" href={`/trails/${trail.id}/`} tabindex="-1" aria-hidden="true">
+    <img
+      src={trail.image}
+      alt=""
+      width="1800"
+      height="1350"
+      loading={priority ? 'eager' : 'lazy'}
+    />
+    <span class={`difficulty difficulty-${trail.difficulty}`}>
+      <span aria-hidden="true">{difficultyIcons[trail.difficulty]}</span>
+      {trail.difficulty}
+    </span>
+  </a>
+  <div class="trail-card-body">
+    <div class="trail-card-heading">
+      <p class="trail-number">TRAIL {trail.id}</p>
+      <h3><a href={`/trails/${trail.id}/`}>{trail.name}</a></h3>
+      <p>{reason ?? trail.short}</p>
+    </div>
+    <dl class="trail-card-facts">
+      <div><dt>距離</dt><dd>約 {trail.distance} km</dd></div>
+      <div><dt>時間</dt><dd>{trail.duration[0]}–{trail.duration[1]} 分</dd></div>
+      <div><dt>適合度</dt><dd><span aria-label={`親子適合度 ${trail.family} 顆星`}>{'●'.repeat(trail.family)}<i>{'●'.repeat(5 - trail.family)}</i></span></dd></div>
+    </dl>
+    <div class="chip-list">
+      {trail.features.slice(0, 3).map((feature) => <span>{feature}</span>)}
+    </div>
+    <div class="trail-card-actions">
+      <a class="text-link" href={`/trails/${trail.id}/`}>查看完整攻略 <span aria-hidden="true">→</span></a>
+      <a class="map-link" href={trail.maps.directions} target="_blank" rel="noopener" aria-label={`開啟 Google Maps 導航至${trail.name}`}>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s7-6.2 7-13a7 7 0 1 0-14 0c0 6.8 7 13 7 13Z"/><circle cx="12" cy="8" r="2.3"/></svg>
+        導航
+      </a>
+    </div>
+  </div>
+</article>

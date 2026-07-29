@@ -1,0 +1,124 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import PageHero from '../../components/PageHero.astro';
+import TrailCard from '../../components/TrailCard.astro';
+import SectionHeading from '../../components/SectionHeading.astro';
+import { trails } from '../../data/trails';
+
+const title = '大坑步道難度比較｜親子、新手與挑戰路線怎麼選';
+const description = '比較大坑14條步道的難度、距離、時間、海拔、路面、遮蔭、親子適合度、停車與大眾運輸，快速選出適合路線。';
+---
+<BaseLayout title={title} description={description}>
+  <Breadcrumbs items={[{ label: '步道比較' }]} />
+  <PageHero eyebrow="TRAIL COMPARISON" title="一次比較14條大坑步道" description="把難度、時間、路面與交通放在同一張表。先排除不適合的，再從兩三條候選路線中決定。" compact />
+
+  <section class="compare-intro">
+    <div class="shell compare-highlights">
+      <a id="easy" href="/trails/9-1/"><span>最短入門</span><strong>9-1號</strong><small>約30–60分鐘</small></a>
+      <a id="family" href="/trails/9/"><span>親子首選</span><strong>9號</strong><small>交通與補給方便</small></a>
+      <a id="classic" href="/trails/2/"><span>經典圓木</span><strong>2號</strong><small>腿力與平衡挑戰</small></a>
+      <a id="challenge" href="/trails/4/"><span>高地挑戰</span><strong>4號</strong><small>爬升與稜線</small></a>
+    </div>
+  </section>
+
+  <section class="comparison-section">
+    <div class="shell">
+      <div class="comparison-controls">
+        <div>
+          <label for="compare-sort">排序方式</label>
+          <select id="compare-sort" data-compare-sort>
+            <option value="index">步道編號</option>
+            <option value="easy">由簡單到困難</option>
+            <option value="short">時間最短</option>
+            <option value="family">最適合親子</option>
+          </select>
+        </div>
+        <p>● 為便利度／適合度，5顆代表相對較高；不是安全保證。</p>
+      </div>
+      <div class="comparison-table-wrap">
+        <table class="comparison-table">
+          <thead><tr><th>步道</th><th>難度</th><th>距離</th><th>時間</th><th>主要路面</th><th>遮蔭</th><th>親子</th><th>停車</th><th>公車</th><th>導航</th></tr></thead>
+          <tbody data-compare-body>
+            {trails.map((trail, index) => (
+              <tr data-row data-index={index} data-rank={({ 親子: 1, 入門: 2, 中等: 3, 進階: 4, 挑戰: 5 } as Record<string, number>)[trail.difficulty]} data-duration={trail.duration[1]} data-family={trail.family}>
+                <th><a href={`/trails/${trail.id}/`}>{trail.id}號</a></th>
+                <td><span class={`table-difficulty table-${trail.difficulty}`}>{trail.difficulty}</span></td>
+                <td>{trail.distance} km</td>
+                <td>{trail.duration[0]}–{trail.duration[1]}分</td>
+                <td>{trail.surfaces.slice(0, 2).join('、')}</td>
+                <td>{trail.shade}</td>
+                <td><span class="dots">{'●'.repeat(trail.family)}<i>{'●'.repeat(5 - trail.family)}</i></span></td>
+                <td><span class="dots">{'●'.repeat(trail.parking)}<i>{'●'.repeat(5 - trail.parking)}</i></span></td>
+                <td><span class="dots">{'●'.repeat(trail.transit)}<i>{'●'.repeat(5 - trail.transit)}</i></span></td>
+                <td><a class="map-link" href={trail.maps.directions} target="_blank" rel="noopener">開啟 ↗</a></td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <div class="comparison-mobile" data-mobile-comparison>
+        {trails.map((trail, index) => (
+          <details data-mobile-row data-index={index} data-rank={({ 親子: 1, 入門: 2, 中等: 3, 進階: 4, 挑戰: 5 } as Record<string, number>)[trail.difficulty]} data-duration={trail.duration[1]} data-family={trail.family}>
+            <summary><strong>{trail.id}號</strong><span>{trail.difficulty}</span><small>{trail.duration[0]}–{trail.duration[1]}分</small></summary>
+            <div>
+              <dl>
+                <div><dt>距離</dt><dd>{trail.distance} km</dd></div>
+                <div><dt>路面</dt><dd>{trail.surfaces.join('、')}</dd></div>
+                <div><dt>遮蔭</dt><dd>{trail.shade}</dd></div>
+                <div><dt>親子適合度</dt><dd>{trail.family}／5</dd></div>
+                <div><dt>停車便利度</dt><dd>{trail.parking}／5</dd></div>
+                <div><dt>大眾運輸</dt><dd>{trail.transit}／5</dd></div>
+              </dl>
+              <div class="action-row"><a class="button" href={`/trails/${trail.id}/`}>查看攻略</a><a class="button button-secondary" href={trail.maps.directions} target="_blank" rel="noopener">導航 ↗</a></div>
+            </div>
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="content-section alt">
+    <div class="shell">
+      <SectionHeading eyebrow="HOW TO READ" title="難度要看路面，不只看公里數" />
+      <div class="info-grid">
+        <div class="info-card"><span class="icon-circle">1</span><h3>圓木間距</h3><p>圓木不平整且有間距，下坡對膝蓋、腳踝與平衡感要求更高。</p></div>
+        <div class="info-card"><span class="icon-circle">2</span><h3>連續爬升</h3><p>短距離若集中爬升，實際體力消耗可能高於較長的平緩路線。</p></div>
+        <div class="info-card"><span class="icon-circle">3</span><h3>回程與折返</h3><p>抵達高點只完成一半；保留回程腿力，並設定最晚折返時間。</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="content-section">
+    <div class="shell">
+      <SectionHeading eyebrow="QUICK PICKS" title="按同行者快速選" />
+      <div class="trail-grid">
+        {['9-1', '9', '4'].map((id) => {
+          const trail = trails.find((item) => item.id === id);
+          return trail && <TrailCard trail={trail} />;
+        })}
+      </div>
+    </div>
+  </section>
+
+  <script>
+    const sort = document.querySelector<HTMLSelectElement>('[data-compare-sort]');
+    const body = document.querySelector<HTMLElement>('[data-compare-body]');
+    const mobile = document.querySelector<HTMLElement>('[data-mobile-comparison]');
+    const desktopRows = Array.from(document.querySelectorAll<HTMLElement>('[data-row]'));
+    const mobileRows = Array.from(document.querySelectorAll<HTMLElement>('[data-mobile-row]'));
+    const value = (item: HTMLElement, key: string) => Number(item.dataset[key] ?? 0);
+    const sortedRows = (rows: HTMLElement[], mode: string) => [...rows].sort((a, b) => {
+      if (mode === 'easy') return value(a, 'rank') - value(b, 'rank');
+      if (mode === 'short') return value(a, 'duration') - value(b, 'duration');
+      if (mode === 'family') return value(b, 'family') - value(a, 'family');
+      return value(a, 'index') - value(b, 'index');
+    });
+    sort?.addEventListener('change', () => {
+      const mode = sort.value;
+      sortedRows(desktopRows, mode).forEach((row) => body?.append(row));
+      sortedRows(mobileRows, mode).forEach((row) => mobile?.append(row));
+    });
+  </script>
+</BaseLayout>

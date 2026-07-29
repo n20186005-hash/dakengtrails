@@ -1,0 +1,37 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import PageHero from '../../components/PageHero.astro';
+import SectionHeading from '../../components/SectionHeading.astro';
+import { nearby } from '../../data/content';
+export function getStaticPaths() {
+  return nearby.map((item) => ({ params: { slug: item.slug }, props: { item } }));
+}
+const { item } = Astro.props;
+const detail: Record<string, { lead: string; items: [string, string][]; query: string }> = {
+  food: { lead: '健行後先補水，再依停車與回程方向找餐廳，不必為了網路名單繞回塞車路段。', query: '大坑美食',
+    items: [['步道口補給', '9號周邊較容易找到簡單飲食與農產；先確認營業狀況，不把補給視為一定存在。'], ['大坑商圈', '選擇較多，適合回到主要道路後用餐，也比較容易處理停車與同行者需求。'], ['新社順遊', '自駕且時間充裕時可往新社方向安排午餐或下午景點，但要把山區車程算進去。']] },
+  'hot-springs': { lead: '泡湯前先讓心跳與體溫回穩並補充水分；營業、價格與預約制度請向場館確認。', query: '大坑溫泉',
+    items: [['先休息再泡湯', '高強度健行後不要立刻進入高溫池，先休息、補水並留意身體狀況。'], ['確認營業資訊', '溫泉場館可能有預約、清潔或季節調整，出發當日再查看。'], ['安排回程', '泡湯後容易疲累，自駕者需評估精神狀態，必要時延長休息。']] },
+  attractions: { lead: '半日以大坑周邊為主，一日才加入新社；不要在完成高難度步道後塞入太多山區移動。', query: '大坑 周邊景點',
+    items: [['地震與生態主題', '大坑地區可安排地震相關公園與生態場域，適合親子把健行延伸成自然學習。'], ['新社近郊', '自駕旅客可在下午順遊新社，但假日道路與熱門景點需預留時間。'], ['保留空白', '同行者疲累、天候改變或交通壅塞時，刪掉最後一站通常比趕行程更好。']] },
+};
+const content = detail[item.slug];
+const title = `${item.title}｜大坑步道周邊玩法`;
+---
+<BaseLayout title={title} description={item.description}>
+  <Breadcrumbs items={[{ label: '周邊玩法', href: '/nearby/' }, { label: item.title }]} />
+  <PageHero eyebrow="NEARBY DAKENG" title={item.title} description={content.lead} compact />
+  <section class="content-section">
+    <div class="shell">
+      <SectionHeading eyebrow="PLAN IT WELL" title="把順遊排在回程方向" />
+      <div class="info-grid">
+        {content.items.map(([heading, text], index) => <div class="info-card"><span class="icon-circle">{index + 1}</span><h3>{heading}</h3><p>{text}</p></div>)}
+      </div>
+      <div class="nearby-map-link">
+        <div><h2>用地圖查看當日選項</h2><p>營業、價格、預約與評論會變動，請在出發當日自行確認。</p></div>
+        <a class="button" href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(content.query)}`} target="_blank" rel="noopener">開啟 Google Maps 搜尋 ↗</a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

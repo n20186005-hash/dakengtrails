@@ -1,0 +1,24 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import PageHero from '../../components/PageHero.astro';
+import { guides } from '../../data/content';
+const title = '大坑步道行前準備｜裝備、雨天、夏季與親子安全';
+const description = '整理走大坑步道前需要的鞋子、飲水、防曬、防蚊、雨後圓木風險、夏季避熱與帶孩子健行注意事項。';
+---
+<BaseLayout title={title} description={description}>
+  <Breadcrumbs items={[{ label: '行前準備' }]} />
+  <PageHero eyebrow="TRAIL GUIDES" title="準備對了，步道才走得從容" description="從鞋底抓地、飲水、折返時間到雨後風險，這些細節比多帶一件裝備更重要。" image="/images/trails/dakeng-5.jpg" imageAlt="大坑山林岩面與木棧步道" compact />
+  <section class="content-section">
+    <div class="shell guide-index-grid">
+      {guides.map((guide, index) => (
+        <a class="guide-index-card" href={`/guides/${guide.slug}/`}>
+          <span>{String(index + 1).padStart(2, '0')}</span>
+          <h2>{guide.title}</h2>
+          <p>{guide.description}</p>
+          <strong>閱讀指南 →</strong>
+        </a>
+      ))}
+    </div>
+  </section>
+</BaseLayout>

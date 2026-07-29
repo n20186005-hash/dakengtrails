@@ -1,0 +1,21 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import PageHero from '../../components/PageHero.astro';
+import { nearby } from '../../data/content';
+const title = '大坑步道周邊玩法｜美食、溫泉與新社景點';
+const description = '整理大坑健行後的美食、溫泉、地震公園、生態園區與新社順遊方向，規劃半日或一日近郊行程。';
+---
+<BaseLayout title={title} description={description}>
+  <Breadcrumbs items={[{ label: '周邊玩法' }]} />
+  <PageHero eyebrow="AFTER THE HIKE" title="走完步道，順便玩大坑周邊" description="先回到交通節點、補水與休息，再安排吃飯、泡湯或順遊新社，行程會更從容。" image="/images/trails/dakeng-3.jpg" imageAlt="大坑步道望向綠色山谷" compact />
+  <section class="content-section">
+    <div class="shell nearby-grid">
+      {nearby.map((item, index) => (
+        <a class="nearby-card" href={`/nearby/${item.slug}/`}>
+          <span>0{index + 1}</span><h2>{item.title}</h2><p>{item.description}</p><strong>查看玩法 →</strong>
+        </a>
+      ))}
+    </div>
+  </section>
+</BaseLayout>

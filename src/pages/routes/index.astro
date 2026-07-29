@@ -1,0 +1,27 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import PageHero from '../../components/PageHero.astro';
+import { routeGuides } from '../../data/content';
+const title = '大坑步道路線推薦｜第一次、親子、兩小時與半日遊';
+const description = '依第一次造訪、親子、長輩、圓木挑戰、兩小時、半日與一日遊情境，推薦適合的大坑步道路線與時間安排。';
+---
+<BaseLayout title={title} description={description}>
+  <Breadcrumbs items={[{ label: '路線推薦' }]} />
+  <PageHero eyebrow="ROUTE IDEAS" title="先決定今天想怎麼走" description="把同行者、可用時間與交通方式放在一起，路線選擇會比只看步道編號更清楚。" image="/images/trails/dakeng-4.jpg" imageAlt="健行者走在大坑木棧階梯" compact />
+
+  <section class="content-section routes-index">
+    <div class="shell route-index-grid">
+      {routeGuides.map((route, index) => (
+        <a class="route-index-card" href={`/routes/${route.slug}/`}>
+          <span class="route-index-number">{String(index + 1).padStart(2, '0')}</span>
+          <p>{route.kicker}</p>
+          <h2>{route.title}</h2>
+          <div class="route-index-meta"><span>約 {route.minutes} 分鐘</span><span>{route.trails.map((id) => `${id}號`).join('、')}</span></div>
+          <p>{route.description}</p>
+          <strong>查看完整安排 →</strong>
+        </a>
+      ))}
+    </div>
+  </section>
+</BaseLayout>

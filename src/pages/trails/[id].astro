@@ -1,0 +1,220 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import TrailCard from '../../components/TrailCard.astro';
+import SectionHeading from '../../components/SectionHeading.astro';
+import { trails, getTrail } from '../../data/trails';
+
+export function getStaticPaths() {
+  return trails.map((trail) => ({ params: { id: trail.id }, props: { trail } }));
+}
+
+const { trail } = Astro.props;
+const title = `大坑${trail.id}號步道攻略｜難度、停車、入口與Google Maps導航`;
+const description = `整理${trail.name}難度、約${trail.distance}公里、建議時間${trail.duration[0]}至${trail.duration[1]}分鐘、入口、停車、大眾運輸與Google Maps導航。`;
+const faqs = [
+  [`${trail.name}適合第一次去嗎？`, trail.difficulty === '親子' || trail.difficulty === '入門' ? `${trail.name}屬於較容易安排的路線；仍有階梯與坡度，請依同行者體力決定折返點。` : `${trail.name}的${trail.surfaces.join('、')}會提高體力與技巧要求。第一次到大坑若登山經驗少，建議先從9號或9-1號開始。`],
+  [`${trail.name}大約要走多久？`, `單走建議預留約${trail.duration[0]}至${trail.duration[1]}分鐘；休息、拍照、同行者速度與是否串連其他步道都會延長時間。`],
+  [`${trail.name}可以帶小孩嗎？`, trail.family >= 4 ? '可依孩子平時活動量安排，仍需成人全程陪同；步道有階梯，不適合推嬰兒車。' : '不建議把它當作幼兒或毫無登山經驗孩子的首選，圓木、陡坡或爬升會增加風險。'],
+  [`下雨後能走${trail.name}嗎？`, `不建議在持續下雨或豪雨後立即前往。${trail.surfaces.join('、')}雨後可能濕滑，出發前也要查看步道通行情形。`],
+];
+const related = trail.related.map((id: string) => getTrail(id)).filter(Boolean);
+const difficultyIcons: Record<string, string> = { 親子: '●', 入門: '▲', 中等: '▲▲', 進階: '▲▲▲', 挑戰: '↗' };
+const schema = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'TouristAttraction',
+    name: trail.name,
+    description,
+    image: `https://dakengtrails.com${trail.image}`,
+    geo: { '@type': 'GeoCoordinates', latitude: 24.180193, longitude: 120.733698 },
+    hasMap: trail.maps.place,
+    touristType: trail.suitable,
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: '首頁', item: 'https://dakengtrails.com/' },
+      { '@type': 'ListItem', position: 2, name: '大坑步道', item: 'https://dakengtrails.com/trails/' },
+      { '@type': 'ListItem', position: 3, name: trail.name, item: `https://dakengtrails.com/trails/${trail.id}/` },
+    ],
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqs.map(([question, answer]) => ({
+      '@type': 'Question', name: question, acceptedAnswer: { '@type': 'Answer', text: answer },
+    })),
+  },
+];
+---
+<BaseLayout title={title} description={description} image={trail.image} schema={schema}>
+  <Breadcrumbs items={[{ label: '大坑步道', href: '/trails/' }, { label: trail.name }]} />
+  <section class="trail-detail-hero">
+    <div class="shell trail-detail-grid">
+      <div class="trail-detail-copy">
+        <div class={`difficulty difficulty-inline difficulty-${trail.difficulty}`}>
+          <span aria-hidden="true">{difficultyIcons[trail.difficulty]}</span>{trail.difficulty}
+        </div>
+        <p class="trail-number">TRAIL {trail.id}</p>
+        <h1>{trail.name}</h1>
+        <p class="trail-verdict">{trail.verdict}</p>
+        <div class="hero-actions">
+          <a class="button" href={trail.maps.directions} target="_blank" rel="noopener">
+            <svg class="button-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s7-6.2 7-13a7 7 0 1 0-14 0c0 6.8 7 13 7 13Z"/><circle cx="12" cy="8" r="2.3"/></svg>
+            導航至登山口
+          </a>
+          <a class="button button-secondary" href="/compare/">加入路線比較</a>
+        </div>
+      </div>
+      <figure class="trail-detail-photo">
+        <img src={trail.image} alt={trail.imageAlt} width="1800" height="1350" fetchpriority="high" />
+        <figcaption>實景：{trail.imageAlt}</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="trail-facts-section">
+    <div class="shell trail-facts">
+      <dl>
+        <div><dt>難度</dt><dd>{trail.difficulty}</dd></div>
+        <div><dt>距離</dt><dd>約 {trail.distance} km</dd></div>
+        <div><dt>建議時間</dt><dd>{trail.duration[0]}–{trail.duration[1]} 分</dd></div>
+        <div><dt>海拔範圍</dt><dd>約 {trail.elevation[0]}–{trail.elevation[1]} m</dd></div>
+        <div><dt>路線類型</dt><dd>{trail.routeType}</dd></div>
+        <div><dt>主要路面</dt><dd>{trail.surfaces.join('、')}</dd></div>
+      </dl>
+    </div>
+  </section>
+
+  <div class="shell detail-layout">
+    <article class="trail-article prose">
+      <section>
+        <p class="eyebrow">WHO IS IT FOR?</p>
+        <h2>這條步道適合誰？</h2>
+        <p><strong>{trail.verdict}</strong></p>
+        <p>較適合：{trail.suitable.join('、')}。如果同行者平時運動量少、對階梯下坡沒有把握，請把最慢的人作為時間與折返標準。</p>
+      </section>
+
+      <section>
+        <p class="eyebrow">WHY THIS TRAIL?</p>
+        <h2>為什麼選{trail.id}號？</h2>
+        <div class="reason-list">
+          {trail.reasons.map((reason: string, index: number) => (
+            <div><span>0{index + 1}</span><p>{reason}</p></div>
+          ))}
+        </div>
+      </section>
+
+      <section>
+        <p class="eyebrow">ROUTE FLOW</p>
+        <h2>路線會經過什麼？</h2>
+        <p>以下順序用來理解路線節奏；現場岔路、施工與指示仍可能調整，請以當日標示為準。</p>
+        <ol class="route-timeline">
+          {trail.routeSteps.map((step: string, index: number) => <li><span>{index + 1}</span><strong>{step}</strong></li>)}
+        </ol>
+      </section>
+
+      <section>
+        <p class="eyebrow">DIFFICULTY</p>
+        <h2>實際走起來難不難？</h2>
+        <p>{trail.caution}</p>
+        <div class="surface-box">
+          <strong>路面與環境</strong>
+          <div class="chip-list">{trail.surfaces.map((surface: string) => <span>{surface}</span>)}<span>遮蔭：{trail.shade}</span></div>
+        </div>
+      </section>
+
+      <section id="entrance">
+        <p class="eyebrow">ENTRANCE</p>
+        <h2>登山口在哪裡？</h2>
+        <p>{trail.access}</p>
+        <div class="action-row">
+          <a class="button" href={trail.maps.place} target="_blank" rel="noopener">開啟步道地點 ↗</a>
+          <a class="button button-secondary" href={trail.maps.directions} target="_blank" rel="noopener">規劃開車導航 ↗</a>
+        </div>
+      </section>
+
+      <section id="parking">
+        <p class="eyebrow">PARKING</p>
+        <h2>停車怎麼安排？</h2>
+        <p>{trail.parkingNote}</p>
+        <div class="rating-row"><span>停車便利度</span><strong aria-label={`${trail.parking} 顆星`}>{'●'.repeat(trail.parking)}<i>{'●'.repeat(5 - trail.parking)}</i></strong></div>
+        <p><a href="/parking/">查看全部步道停車攻略 →</a></p>
+      </section>
+
+      <section id="transport">
+        <p class="eyebrow">PUBLIC TRANSPORT</p>
+        <h2>搭公車怎麼去？</h2>
+        <p>{trail.transportNote}</p>
+        <div class="rating-row"><span>大眾運輸便利度</span><strong aria-label={`${trail.transit} 顆星`}>{'●'.repeat(trail.transit)}<i>{'●'.repeat(5 - trail.transit)}</i></strong></div>
+        <p><a href="/transport/">查看松竹站到大坑的交通整理 →</a></p>
+      </section>
+
+      <section>
+        <p class="eyebrow">GOOGLE MAPS</p>
+        <h2>{trail.name}地圖</h2>
+        <div class="detail-map">
+          <iframe
+            title={`${trail.name} Google 地圖`}
+            src={`https://www.google.com/maps?q=${encodeURIComponent(trail.name)}&output=embed`}
+            width="760"
+            height="430"
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"
+          ></iframe>
+        </div>
+        <p class="map-note">地圖僅供定位與規劃；最後一段路請依現場步道標示前進。</p>
+      </section>
+
+      <section>
+        <p class="eyebrow">FAQ</p>
+        <h2>{trail.name}常見問題</h2>
+        <div class="faq-list">
+          {faqs.map(([question, answer]) => (
+            <details>
+              <summary>{question}</summary>
+              <div>{answer}</div>
+            </details>
+          ))}
+        </div>
+      </section>
+    </article>
+
+    <aside class="detail-aside">
+      <div class="aside-card">
+        <p class="eyebrow">QUICK CHECK</p>
+        <h2>出發前快速確認</h2>
+        <ul>
+          <li><span>✓</span> 查看當日通行情形</li>
+          <li><span>✓</span> 準備防滑鞋與飲水</li>
+          <li><span>✓</span> 下載入口與回程資訊</li>
+          <li><span>✓</span> 設定最晚折返時間</li>
+        </ul>
+        <a href="https://www.scenic.taichung.gov.tw/833821/833844/833845/3040068" target="_blank" rel="noopener">查看通行情形 ↗</a>
+      </div>
+      <nav class="aside-toc" aria-label="本頁目錄">
+        <strong>本頁重點</strong>
+        <a href="#entrance">登山口</a>
+        <a href="#parking">停車</a>
+        <a href="#transport">大眾運輸</a>
+      </nav>
+    </aside>
+  </div>
+
+  <section class="content-section alt related-section">
+    <div class="shell">
+      <SectionHeading eyebrow="RELATED TRAILS" title="也可以比較這幾條" text="從更簡單、相近難度與附近可銜接的路線中，找到備案。" />
+      <div class="trail-grid">
+        {related.map((item) => item && <TrailCard trail={item} />)}
+      </div>
+    </div>
+  </section>
+
+  <nav class="mobile-sticky-actions" aria-label="步道快速操作">
+    <a href={trail.maps.place} target="_blank" rel="noopener"><span>⌖</span>步道入口</a>
+    <a href="/parking/"><span>Ｐ</span>停車場</a>
+    <a href="/compare/"><span>≡</span>路線比較</a>
+  </nav>
+</BaseLayout>
