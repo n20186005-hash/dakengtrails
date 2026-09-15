@@ -1,0 +1,129 @@
+---
+/**
+ * 景點評分摘要：顯示 Google 地圖評分與評價數，
+ * 並標明資料來源與同步時間；不會將評分寫入 JSON-LD，
+ * 以符合 Google Maps 平台政策與避免冒充官方。
+ */
+import type { AttractionRating } from '../data/attraction';
+import { googleMapsLinks, reviewsAttribution } from '../data/attraction';
+
+interface Props {
+  rating: AttractionRating;
+  /** 是否緊湊模式（單行顯示） */
+  compact?: boolean;
+  /** 評價連結字樣（自訂） */
+  reviewLabel?: string;
+}
+
+const { rating, compact = false, reviewLabel = '在谷歌地圖查看全部評價' } = Astro.props;
+
+const fullStars = Math.floor(rating.score);
+const hasHalfStar = rating.score - fullStars >= 0.5;
+const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
+const formattedCount = rating.reviewCount.toLocaleString('en-US');
+---
+
+<div class:list={["google-rating-summary", compact && "compact"]} aria-label={`Google 地圖評分 ${rating.score} 分，共 ${rating.reviewCount} 則評價，資料同步於 ${rating.syncedAt}`}>
+  <div class="google-rating-summary-score">
+    <strong>{rating.score.toFixed(1)}</strong>
+    <span class="stars" aria-hidden="true">
+      {'★'.repeat(fullStars)}
+      {hasHalfStar && <span class="star-half">★</span>}
+      {'☆'.repeat(emptyStars)}
+    </span>
+  </div>
+  <div class="google-rating-summary-meta">
+    <span class="google-rating-summary-count"><strong>{formattedCount}</strong> 則 Google 地圖評價</span>
+    <a
+      class="google-rating-summary-link"
+      href={googleMapsLinks.allReviews}
+      target="_blank"
+      rel="noopener noreferrer nofollow"
+    >
+      {reviewLabel} ↗
+    </a>
+  </div>
+  <p class="google-rating-summary-caption">{reviewsAttribution.caption}</p>
+</div>
+
+<style>
+  .google-rating-summary {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    grid-template-areas:
+      "score meta"
+      "caption caption";
+    gap: 6px 18px;
+    padding: 18px 22px;
+    border: 1px solid rgba(23, 63, 53, 0.12);
+    border-radius: 14px;
+    background: #fcf9f1;
+  }
+  .google-rating-summary.compact {
+    grid-template-columns: auto auto;
+    grid-template-areas:
+      "score meta"
+      "caption caption";
+    padding: 12px 16px;
+    border-radius: 999px;
+  }
+  .google-rating-summary-score {
+    grid-area: score;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+  .google-rating-summary-score strong {
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 2.4rem;
+    line-height: 1;
+    color: var(--forest, #173f35);
+    font-weight: 600;
+  }
+  .google-rating-summary.compact .google-rating-summary-score strong {
+    font-size: 1.6rem;
+  }
+  .google-rating-summary .stars {
+    color: #e8ae4f;
+    font-size: 1.1rem;
+    letter-spacing: 2px;
+  }
+  .google-rating-summary .star-half {
+    background: linear-gradient(90deg, #e8ae4f 50%, #d7d5cb 50%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .google-rating-summary-meta {
+    grid-area: meta;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 4px;
+    min-width: 0;
+  }
+  .google-rating-summary-count strong {
+    color: var(--forest, #173f35);
+    font-size: 1.05rem;
+    font-weight: 760;
+  }
+  .google-rating-summary-count {
+    color: var(--muted, #65706b);
+    font-size: 0.92rem;
+  }
+  .google-rating-summary-link {
+    color: var(--wood-dark, #8b4f2a);
+    font-size: 0.86rem;
+    font-weight: 760;
+    border-bottom: 1px solid currentColor;
+  }
+  .google-rating-summary-caption {
+    grid-area: caption;
+    margin: 4px 0 0;
+    color: var(--muted, #65706b);
+    font-size: 0.72rem;
+    line-height: 1.55;
+  }
+</style>

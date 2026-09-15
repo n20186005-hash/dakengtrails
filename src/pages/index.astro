@@ -2,11 +2,29 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SectionHeading from '../components/SectionHeading.astro';
 import TrailCard from '../components/TrailCard.astro';
+import GoogleRating from '../components/GoogleRating.astro';
+import Reviews from '../components/Reviews.astro';
+import WeatherPanel from '../components/WeatherPanel.astro';
+import SeasonalStrategy from '../components/SeasonalStrategy.astro';
+import Itinerary from '../components/Itinerary.astro';
+import VisitorServices from '../components/VisitorServices.astro';
+import HistoryBlock from '../components/HistoryBlock.astro';
+import Responsibility from '../components/Responsibility.astro';
 import { trails } from '../data/trails';
 import { routeGuides } from '../data/content';
+import { attraction, googleMapsLinks, attractionGeo, attractionPostalAddress } from '../data/attraction';
+import { loadWeather } from '../lib/weather';
 
-const title = '大坑步道指南｜14條步道難度、停車、交通與Google Maps導航';
-const description = '整理臺中大坑14條登山步道的難度、距離、建議時間、入口、停車與大眾運輸，快速選擇適合你的路線並開啟Google Maps導航。';
+const title = `${attraction.fullName}（${attraction.city}）- 14條步道比較・停車・地圖導航`;
+const description = `完整收錄 ${attraction.fullName}（${attraction.fullName}）在${attraction.city}${attraction.district}的14條步道：難度比較、入口、停車、大眾運輸與 Google 地圖導航，協助${attraction.fullName}（Dakeng Trails）旅客快速決策。`;
+
+let weatherBundle = null;
+try {
+  weatherBundle = await loadWeather();
+} catch (_) {
+  weatherBundle = null;
+}
+
 const faqs = [
   ['大坑步道哪一條最簡單？', '9-1號距離短、交通與補給也相對方便；8號同樣適合短程入門。即使是親子級路線，仍有階梯與坡度，請依同行者體力調整。'],
   ['第一次去大坑走哪一條？', '優先考慮9號或9-1號。入口辨識、停車、大眾運輸與周邊補給都比較容易掌握，也能依體力彈性組合。'],
@@ -17,34 +35,50 @@ const faqs = [
   ['沒有開車怎麼去？', '可從臺鐵或捷運松竹站一帶轉乘往大坑方向的公車。9、9-1與10號相對容易安排，班次與停靠請以出發當日資訊為準。'],
   ['下雨後適合走嗎？', '圓木、岩面、落葉與階梯雨後都更滑。若仍有降雨、豪雨後或發布管制，應改期；出發前務必查看通行情形。'],
 ];
-const schema = [
+
+/**
+ * 首頁 JSON-LD：完整 TouristAttraction（含 @id、address、geo、hasMap、sameAs）
+ * + WebSite + Organization + ItemList + FAQPage。
+ * 注意：不包含 aggregateRating 評分，避免冒充官方違反 Google 政策。
+ */
+const homeSchema = [
   {
     '@context': 'https://schema.org',
     '@type': 'WebSite',
+    '@id': `${attraction.domain ? `https://${attraction.domain}/` : ''}#website`,
     name: 'Dakeng Trails 大坑步道指南',
-    url: 'https://dakengtrails.com/',
+    url: `https://${attraction.domain}/`,
     description,
     inLanguage: 'zh-Hant-TW',
   },
   {
     '@context': 'https://schema.org',
     '@type': 'TouristAttraction',
-    name: '大坑風景區',
-    alternateName: 'Dakeng Scenic Area',
-    description: '臺中大坑登山步道、交通、停車與路線選擇指南。',
-    geo: { '@type': 'GeoCoordinates', latitude: 24.180193, longitude: 120.733698 },
-    hasMap: 'https://www.google.com/maps/search/?api=1&query=%E5%A4%A7%E5%9D%91%E9%A2%A8%E6%99%AF%E5%8D%80',
+    '@id': `https://${attraction.domain}/#attraction`,
+    name: attraction.fullName,
+    alternateName: ['Dakeng Trails', `大坑步道指南`, 'Dakeng Scenic Area'],
+    description: `${attraction.fullName}位於${attraction.city}${attraction.district}，共14條步道，從親子散步到圓木挑戰皆有，並整合停車、大眾運輸與 Google 地圖導航。`,
+    url: `https://${attraction.domain}/`,
+    image: [
+      `https://${attraction.domain}/images/trails/dakeng-4.jpg`,
+      `https://${attraction.domain}/images/trails/dakeng-2.jpg`,
+    ],
+    isAccessibleForFree: true,
+    address: attractionPostalAddress,
+    geo: attractionGeo,
+    hasMap: googleMapsLinks.share,
+    telephone: attraction.phone,
+    sameAs: [googleMapsLinks.share, attraction.officialTourismUrl],
   },
   {
     '@context': 'https://schema.org',
     '@type': 'ItemList',
     name: '大坑14條登山步道',
-    numberOfItems: trails.length,
     itemListElement: trails.map((trail, index) => ({
       '@type': 'ListItem',
       position: index + 1,
       name: trail.name,
-      url: `https://dakengtrails.com/trails/${trail.id}/`,
+      url: `https://${attraction.domain}/trails/${trail.id}/`,
     })),
   },
   {
@@ -57,15 +91,21 @@ const schema = [
     })),
   },
 ];
+
+const homePageFaqs = faqs.map(([question, answer]) => ({ question, answer }));
+
+const trailImageAlt = `${attraction.fullName} - ${trail => trail} 在 ${attraction.city}`;
 ---
 
-<BaseLayout title={title} description={description} schema={schema}>
+<BaseLayout title={title} description={description} schema={homeSchema} faqPage={homePageFaqs}>
+  <!-- Hero -->
   <section class="home-hero">
     <div class="shell home-hero-grid">
       <div class="home-hero-copy">
-        <p class="eyebrow">TAICHUNG · DAKENG</p>
-        <h1>大坑步道<br /><em>怎麼選？</em></h1>
-        <p>比較臺中大坑14條步道的難度、時間、入口與停車方式，找到適合你的路線，再用 Google Maps 直接導航。</p>
+        <p class="eyebrow">TAICHUNG · DAKENG · {attraction.shortName}</p>
+        <h1>{attraction.fullName}<br /><em>怎麼選？</em></h1>
+        <p>比較臺中 <strong>{attraction.fullName}</strong>（{attraction.shortName}）14 條步道的難度、時間、入口與停車方式，找到適合你的路線，再用 Google Maps 直接導航。</p>
+        <GoogleRating rating={attraction.rating} compact />
         <div class="hero-actions">
           <a class="button" href="#trail-finder">
             選擇適合我的步道
@@ -81,10 +121,21 @@ const schema = [
       </div>
       <div class="home-hero-visual">
         <figure class="hero-photo-main">
-          <img src="/images/trails/dakeng-4.jpg" alt="健行者走在臺中大坑林間木棧階梯" width="1800" height="1350" fetchpriority="high" />
+          <img
+            src="/images/trails/dakeng-4.jpg"
+            alt={`${attraction.fullName} - Main view in ${attraction.city}, Taiwan`}
+            width="1800"
+            height="1350"
+            fetchpriority="high"
+          />
         </figure>
         <figure class="hero-photo-small">
-          <img src="/images/trails/dakeng-3.jpg" alt="大坑山林與石階步道" width="1800" height="1350" />
+          <img
+            src="/images/trails/dakeng-3.jpg"
+            alt={`${attraction.fullName} 山林步道與石階 - Hiking near ${attraction.city}`}
+            width="1800"
+            height="1350"
+          />
         </figure>
         <div class="hero-route-note">
           <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M9 38c3-17 10-26 29-28M28 7l10 3-4 10"/></svg>
@@ -95,12 +146,13 @@ const schema = [
     </div>
   </section>
 
+  <!-- H2: Hiking trail finder -->
   <section class="finder-section" id="trail-finder">
     <div class="shell">
       <SectionHeading
         eyebrow="TRAIL FINDER"
         title="用四個問題，找出你的步道"
-        text="不必先研究每一條路線。選擇同行者、時間、體驗與交通方式，我們會從14條步道中排出更適合的選項。"
+        text={`不必先研究每一條路線。選擇同行者、時間、體驗與交通方式，我們會從 ${attraction.shortName} 14 條步道中排出更適合的選項。`}
       />
 
       <form class="trail-finder" data-trail-finder>
@@ -165,12 +217,13 @@ const schema = [
     </div>
   </section>
 
+  <!-- H2: First-time visitors -->
   <section class="content-section scenarios-section">
     <div class="shell">
-      <SectionHeading eyebrow="FIRST VISIT" title="第一次來，這樣選最快" text="不從編號開始，而是從你想要的體驗開始。" />
+      <SectionHeading eyebrow="FIRST VISIT" title="第一次來，這樣選最快" text={`不從編號開始，而是從你想要的體驗開始。${attraction.shortName} 提供 14 條不同難度的步道，總會找到適合你的一條。`} />
       <div class="scenario-grid">
         <a class="scenario-card scenario-featured" href="/routes/first-time/">
-          <img src="/images/trails/dakeng-2.jpg" alt="林蔭中的大坑緩坡階梯步道" width="1800" height="1349" loading="lazy" />
+          <img src="/images/trails/dakeng-2.jpg" alt={`${attraction.fullName} 林蔭緩坡階梯 - Easy access trail in ${attraction.city}, Taiwan`} width="1800" height="1349" loading="lazy" />
           <span class="scenario-index">01</span>
           <div>
             <p>第一次到大坑</p>
@@ -202,6 +255,7 @@ const schema = [
     </div>
   </section>
 
+  <!-- H2: Comparison preview -->
   <section class="content-section compare-preview">
     <div class="shell compare-preview-grid">
       <div>
@@ -215,22 +269,23 @@ const schema = [
         <a class="button button-secondary" href="/compare/">查看完整步道比較</a>
       </div>
       <figure class="compare-photo">
-        <img src="/images/trails/dakeng-5.jpg" alt="大坑林間木棧道、岩石與原生樹木" width="1800" height="1350" loading="lazy" />
+        <img src="/images/trails/dakeng-5.jpg" alt={`${attraction.fullName} 林間木棧道、岩石與原生樹木 - Mountain forest near ${attraction.shortName}`} width="1800" height="1350" loading="lazy" />
         <figcaption><span>路面觀察</span> 木階、岩面與林蔭會直接改變健行節奏。</figcaption>
       </figure>
     </div>
   </section>
 
+  <!-- H2: Map preview -->
   <section class="content-section map-preview">
     <div class="shell">
       <div class="map-heading">
-        <SectionHeading eyebrow="MAP & DIRECTIONS" title="入口不同，導航終點也不同" text="不要只導航「大坑風景區」。先確認要走的步道，再開啟具體入口或停車場導航。" />
+        <SectionHeading eyebrow="MAP & DIRECTIONS" title="入口不同，導航終點也不同" text={`不要只導航「${attraction.fullName}」。先確認要走的步道，再開啟具體入口或停車場導航。`} />
         <a class="button button-secondary" href="/map/">查看入口地圖</a>
       </div>
       <div class="map-frame-wrap">
         <iframe
-          title="大坑風景區 Google 地圖"
-          src="https://www.google.com/maps?q=%E5%A4%A7%E5%9D%91%E9%A2%A8%E6%99%AF%E5%8D%80&output=embed"
+          title={`${attraction.fullName} Google 地圖`}
+          src={googleMapsLinks.embed}
           width="1180"
           height="520"
           loading="lazy"
@@ -245,6 +300,7 @@ const schema = [
     </div>
   </section>
 
+  <!-- H2: Route preview -->
   <section class="content-section route-preview">
     <div class="shell">
       <SectionHeading eyebrow="SUGGESTED PLANS" title="不是只走一條步道，而是安排一段好行程" text="把交通、健行、休息與周邊用餐放在同一條時間線上，更容易抓準出發與回程。" />
@@ -264,10 +320,11 @@ const schema = [
     </div>
   </section>
 
+  <!-- H2: Preparation -->
   <section class="content-section prep-preview">
     <div class="shell prep-grid">
       <div>
-        <SectionHeading eyebrow="BEFORE YOU GO" title="出發前，先把四件事準備好" text="大坑是城市近郊步道，但圓木、陡坡、濕滑與高溫仍需要認真準備。" />
+        <SectionHeading eyebrow="BEFORE YOU GO" title="出發前，先把四件事準備好" text={`${attraction.shortName} 是城市近郊步道，但圓木、陡坡、濕滑與高溫仍需要認真準備。`} />
         <a class="text-link" href="/guides/what-to-bring/">查看完整行前清單 <span aria-hidden="true">→</span></a>
       </div>
       <div class="prep-list">
@@ -279,6 +336,55 @@ const schema = [
     </div>
   </section>
 
+  <!-- H2: 即時氣象（從伺服器端拉取、30 分鐘快取；前端無 API 字樣） -->
+  <section class="content-section weather-section">
+    <div class="shell">
+      <SectionHeading eyebrow="NOW · NEXT 7 DAYS" title="出門前最在意的兩件事：會不會下雨、體感幾度" text="即時溫度、體感與七日預報的整合面板；協助評估要帶傘、防曬，或延後出發。" />
+      <WeatherPanel bundle={weatherBundle} showHeader={false} />
+      <div class="section-footer-link"><a class="text-link" href="/weather/">查看完整氣象與預報 <span aria-hidden="true">→</span></a></div>
+    </div>
+  </section>
+
+  <!-- H2: 四季遊覽策略摘要 -->
+  <section class="content-section alt seasons-preview">
+    <div class="shell">
+      <SeasonalStrategy showHeading={true} heading="四季遊覽策略摘要" eyebrow="SEASONAL PLAYBOOK" />
+      <div class="section-footer-link"><a class="text-link" href="/seasons/">查看完整四季策略 <span aria-hidden="true">→</span></a></div>
+    </div>
+  </section>
+
+  <!-- H2: 行程節奏摘要 -->
+  <section class="content-section itinerary-preview">
+    <div class="shell">
+      <Itinerary showHeading={true} heading="行程節奏：半日 / 全日 / 三類按對象" eyebrow="ITINERARIES" />
+      <div class="section-footer-link"><a class="text-link" href="/itinerary/">查看完整行程模板 <span aria-hidden="true">→</span></a></div>
+    </div>
+  </section>
+
+  <!-- H2: 設施類型指南（中立） -->
+  <section class="content-section alt facilities-preview">
+    <div class="shell">
+      <VisitorServices showHeading={true} heading="週邊設施類型指南（中立客觀）" eyebrow="FACILITIES" />
+      <div class="section-footer-link"><a class="text-link" href="/facilities/">查看完整設施與檢核表 <span aria-hidden="true">→</span></a></div>
+    </div>
+  </section>
+
+  <!-- H2: 歷史、故事與地名由來 -->
+  <section class="content-section history-preview">
+    <div class="shell">
+      <HistoryBlock showHeading={true} heading="歷史、故事與地名由來" eyebrow="HISTORY · LEGENDS" showLegends={true} showGeology={true} />
+      <div class="section-footer-link"><a class="text-link" href="/history/">查看完整歷史與傳說 <span aria-hidden="true">→</span></a></div>
+    </div>
+  </section>
+
+  <!-- H2: 訪客責任與 LNT -->
+  <section class="content-section alt responsibility-preview">
+    <div class="shell">
+      <Responsibility showHeading={true} heading="訪客責任與入山 SOP" eyebrow="RESPONSIBILITY · ETIQUETTE" />
+    </div>
+  </section>
+
+  <!-- H2: FAQ preview (page only, JSON-LD already in head) -->
   <section class="content-section alt">
     <div class="shell">
       <SectionHeading eyebrow="FAQ" title="第一次規劃大坑，常遇到的問題" />
@@ -294,6 +400,13 @@ const schema = [
     </div>
   </section>
 
+  <!-- H2: Google Maps reviews - 顯示評分與精選評價（不入 JSON-LD） -->
+  <Reviews
+    title="Google 地圖使用者評價精選"
+    description={`以下評分與精選內容同步自 Google 地圖公開評價，僅作為本站內容輔助。最即時的評論、照片與最新評分請以 ${attraction.fullName} Google 地圖頁面為準。`}
+  />
+
+  <!-- H2: Final CTA -->
   <section class="content-section final-cta">
     <div class="shell cta-panel">
       <div>

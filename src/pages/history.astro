@@ -1,0 +1,92 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import HistoryBlock from '../components/HistoryBlock.astro';
+import { attraction } from '../data/attraction';
+
+export const prerender = true;
+
+const title = `歷史背景・故事與地名由來 - ${attraction.fullName}`;
+const description = `${attraction.fullName}的歷史沿革、地名由來、921 大地震整修與地方傳說；供非營利科普使用，彙整公開資料脈絡。`;
+
+const breadcrumb = [
+  { label: '首頁', href: '/' },
+  { label: '歷史・故事・傳說' },
+];
+
+const faq = [
+  ['「大坑」地名怎麼來的？', '一般說法源自早期漢人聚落的「大坑」地形特徵，後成為通用地名；日治時期設置「經補庫」派出所為重要節點。'],
+  ['「經補庫」地名從何而來？', '源自日治時期「ケブク（kebuku）」的音譯，為日語警察派出所之意。'],
+  ['921 大地震對大坑步道有什麼影響？', '921 集集地震規模 7.3，造成部分路線木棧、階梯與邊坡受損，災後進行系統性整修與補強。'],
+  ['大坑有什麼在地傳說？', '山區流傳有「魔神仔」、「紅腳」等山林靈性故事，反映早期對夜間入山的警覺，並提醒大眾結伴行動。'],
+];
+
+const faqPageSchema = faq.map(([question, answer]) => ({ question, answer }));
+
+const intro = [
+  '大坑不只是 14 條步道，而是層層累積的故事：早期拓墾的足跡、日治時期留下的地名、921 大地震後的整修、以及老一輩口耳相傳的山中傳說。本頁嘗試將公開資料中可考的部分整合為非營利科普內容。',
+  '資料以臺中市府觀光、文化文獻、政府開放資料為主要參考；對應到地名的部分，盡可能標示原始出處脈絡，避免誤傳。',
+];
+---
+
+<BaseLayout title={title} description={description} breadcrumbs={breadcrumb} faqPage={faqPageSchema}>
+  <section class="page-hero">
+    <div class="shell">
+      <p class="eyebrow">HISTORY · LEGENDS · PLACE NAMES</p>
+      <h1>{attraction.fullName}<br /><em>歷史、故事與地名由來</em></h1>
+      {intro.map((p) => <p>{p}</p>)}
+    </div>
+  </section>
+
+  <section class="content-section">
+    <div class="shell">
+      <HistoryBlock />
+    </div>
+  </section>
+
+  <section class="content-section alt">
+    <div class="shell">
+      <p class="eyebrow">USING THESE RECORDS</p>
+      <h2>使用這份資料的方式</h2>
+      <ul class="history-usage">
+        <li>本網站屬於非營利科普性質，所有內容僅供訪客事前認識地方脈絡。</li>
+        <li>地名與歷史的紀錄可能存在不同版本，本頁彙整較常見的說法，並標示資料性質。</li>
+        <li>若您有更多在地考據可提供，可透過頁尾「關於站點」內的聯絡方式回饋。</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="content-section">
+    <div class="shell">
+      <p class="eyebrow">FAQ · HISTORY</p>
+      <h2>歷史常見問答</h2>
+      <div class="faq-list">
+        {faq.map(([q, a]) => (
+          <details>
+            <summary>{q}</summary>
+            <div>{a}</div>
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .page-hero { padding: 80px 0 30px; background: linear-gradient(180deg, #fcfaf5 0%, #f3efe5 100%); }
+  .page-hero h1 { font-family: Georgia, serif; color: var(--forest, #173f35); font-size: clamp(2rem, 4vw, 3rem); font-weight: 500; line-height: 1.1; margin: 14px 0 22px; }
+  .page-hero em { color: var(--wood, #b96f3b); font-style: italic; font-weight: 500; }
+  .page-hero p { color: var(--muted, #65706b); max-width: 720px; line-height: 1.9; }
+  .shell { max-width: 1200px; margin: 0 auto; padding: 0 22px; }
+  .eyebrow { color: var(--wood, #b96f3b); font-weight: 700; letter-spacing: 0.18em; font-size: 0.78rem; }
+
+  .content-section { padding: 60px 0; }
+  .content-section.alt { background: #f3efe5; }
+  .content-section h2 { font-family: Georgia, serif; color: var(--forest, #173f35); font-size: clamp(1.6rem, 3vw, 2.2rem); margin: 12px 0 24px; }
+
+  .history-usage { padding-left: 1.2em; color: #394841; line-height: 1.95; }
+  .history-usage li { margin-bottom: 6px; }
+
+  .faq-list details { padding: 14px 18px; border-bottom: 1px solid rgba(23,63,53,.1); }
+  .faq-list summary { font-weight: 700; color: var(--forest, #173f35); cursor: pointer; padding: 4px 0; }
+  .faq-list div { color: var(--muted, #65706b); line-height: 1.85; padding: 10px 0 0; }
+</style>

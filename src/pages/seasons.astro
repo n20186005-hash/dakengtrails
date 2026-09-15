@@ -1,0 +1,89 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SeasonalStrategy from '../components/SeasonalStrategy.astro';
+import { attraction } from '../data/attraction';
+
+export const prerender = true;
+
+const title = `四季遊覽策略 - ${attraction.fullName} 步道指南`;
+const description = `${attraction.fullName}四季遊覽策略：春季留意鋒面與濃霧、夏季午後雷雨與熱傷害、秋季全程推薦、冬季濃霧與低溫。並附中央氣象署長年均態與在地安全建議。`;
+
+const breadcrumb = [
+  { label: '首頁', href: '/' },
+  { label: '四季遊覽策略' },
+];
+
+const faq = [
+  ['哪個季節最適合第一次來？', '以全年舒適度而言，秋季（10–11月）最佳；若無法避免夏季，建議清晨出發並於中午前下山，避開午後雷雨。'],
+  ['颱風季是否仍可上山？', '請依中央氣象署最新警、特報為主，外圍環流亦可能造成山區強陣風與落葉，請儘量延期。'],
+  ['春末梅雨要怎麼穿？', '採「洋蔥式」分層穿搭並攜帶輕便雨衣與防滑鞋，避免穿新鞋或拖鞋上圓木棧道。'],
+  ['冬季保暖建議？', '山區早晚溫差大，建議帶薄外套與毛帽，行動時可脫、靜止時穿上。'],
+];
+
+const faqPageSchema = faq.map(([question, answer]) => ({ question, answer }));
+---
+
+<BaseLayout title={title} description={description} breadcrumbs={breadcrumb} faqPage={faqPageSchema}>
+  <section class="page-hero">
+    <div class="shell">
+      <p class="eyebrow">SEASONAL · PLAYBOOK</p>
+      <h1>{attraction.fullName}<br /><em>四季遊覽策略</em></h1>
+      <p>「什麼時候走」和「走哪一條」同等重要。本頁整理中央氣象署長年均態與在地實務經驗，把氣象、路線、注意事項與裝備建議放在同一張表上。</p>
+    </div>
+  </section>
+
+  <section class="content-section">
+    <div class="shell">
+      <SeasonalStrategy />
+    </div>
+  </section>
+
+  <section class="content-section alt">
+    <div class="shell">
+      <p class="eyebrow">EXTENDED NOTES</p>
+      <h2>出門前更進一步</h2>
+      <ul class="seasons-tips">
+        <li><strong>雨量與雷雨</strong>出發前 6 小時應再次確認中央氣象署<a href="https://www.cwb.gov.tw/V8/C/W/observation/observation.html" target="_blank" rel="noopener noreferrer">即時觀測資料</a>。</li>
+        <li><strong>步道管制</strong>任何工程或颱風警報都可能臨時封閉部分步道，請對照<a href="https://www.scenic.taichung.gov.tw/833821/833844/833845/3040068" target="_blank" rel="noopener noreferrer">通行情形公告</a>。</li>
+        <li><strong>體溫調節</strong>林蔭多的路線（如 8、9、10 號）溫度波動小，稜線段（4、5 號）風勢較大，請依路線準備分層穿著。</li>
+        <li><strong>人潮管理</strong>連假、節慶與秋季週末登山口周邊容易壅塞，建議提前 30 分鐘抵達並準備替代停車點。</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="content-section">
+    <div class="shell">
+      <p class="eyebrow">FAQ · SEASONS</p>
+      <h2>常見的季節問題</h2>
+      <div class="faq-list">
+        {faq.map(([q, a]) => (
+          <details>
+            <summary>{q}</summary>
+            <div>{a}</div>
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .page-hero { padding: 80px 0 30px; background: linear-gradient(180deg, #fcfaf5 0%, #f3efe5 100%); }
+  .page-hero h1 { font-family: Georgia, serif; color: var(--forest, #173f35); font-size: clamp(2rem, 4vw, 3rem); font-weight: 500; line-height: 1.1; margin: 14px 0 22px; }
+  .page-hero em { color: var(--wood, #b96f3b); font-style: italic; font-weight: 500; }
+  .page-hero p { color: var(--muted, #65706b); max-width: 720px; line-height: 1.9; }
+  .shell { max-width: 1200px; margin: 0 auto; padding: 0 22px; }
+  .eyebrow { color: var(--wood, #b96f3b); font-weight: 700; letter-spacing: 0.18em; font-size: 0.78rem; }
+
+  .content-section { padding: 60px 0; }
+  .content-section.alt { background: #f3efe5; }
+  .content-section h2 { font-family: Georgia, serif; color: var(--forest, #173f35); font-size: clamp(1.6rem, 3vw, 2.2rem); margin: 12px 0 24px; }
+
+  .seasons-tips { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+  .seasons-tips li { padding: 14px 18px; border-radius: 12px; background: #fcfaf5; border-left: 4px solid var(--wood, #b96f3b); line-height: 1.85; color: #394841; }
+  .seasons-tips strong { color: var(--forest, #173f35); display: inline-block; min-width: 92px; }
+
+  .faq-list details { padding: 14px 18px; border-bottom: 1px solid rgba(23,63,53,.1); }
+  .faq-list summary { font-weight: 700; color: var(--forest, #173f35); cursor: pointer; padding: 4px 0; }
+  .faq-list div { color: var(--muted, #65706b); line-height: 1.85; padding: 10px 0 0; }
+</style>

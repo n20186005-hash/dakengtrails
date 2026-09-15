@@ -1,0 +1,107 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Itinerary from '../components/Itinerary.astro';
+import { attraction } from '../data/attraction';
+
+export const prerender = true;
+
+const title = `行程節奏建議 - ${attraction.fullName} 步道指南`;
+const description = `${attraction.fullName}的半日、全日、親子、攝影、低體力無障礙行程模板；含節奏、安全提醒與替代方案。`;
+
+const breadcrumb = [
+  { label: '首頁', href: '/' },
+  { label: '行程節奏' },
+];
+
+const faq = [
+  ['半日完整行程要多久？', '通用半日版約 3–4 小時，含交通與緩衝；建議於 8:00 前出發以避開人潮。'],
+  ['全日行程的強度？', '挑戰型全日行程含 4–5 小時步行，建議於中午前完成主要爬升段。'],
+  ['帶長輩怎麼安排？', '建議安排 9-1 號短程路線與商圈緩步走，避免走 4 號或 5 號等高難度步道。'],
+  ['有適合無障礙的路線嗎？', '建議以 9-1 號與商圈為主，並事前致電確認公廁與停車場的無障礙設施。'],
+];
+
+const faqPageSchema = faq.map(([question, answer]) => ({ question, answer }));
+
+const intro = [
+  '行前的最大問題常常不是「要走哪一條」，而是「要走多久、要帶什麼、要在哪裡吃」。本頁將行程切成五種對象類型：半日、全日、親子、攝影、低體力／無障礙，協助在 30 秒內理解節奏。',
+  '以下行程中的地名僅作為入口與步道名稱引用，不涉及任何特定商家或餐廳。建議以 Google Maps「地名 + 類型」搜尋得到最新資訊。',
+];
+---
+
+<BaseLayout title={title} description={description} breadcrumbs={breadcrumb} faqPage={faqPageSchema}>
+  <section class="page-hero">
+    <div class="shell">
+      <p class="eyebrow">ITINERARIES</p>
+      <h1>{attraction.fullName}<br /><em>行程節奏建議</em></h1>
+      {intro.map((p) => <p>{p}</p>)}
+    </div>
+  </section>
+
+  <section class="content-section">
+    <div class="shell">
+      <Itinerary />
+    </div>
+  </section>
+
+  <section class="content-section alt">
+    <div class="shell">
+      <p class="eyebrow">PRACTICAL STEPS</p>
+      <h2>三個常見的行程組合</h2>
+      <div class="itinerary-mix-grid">
+        <article>
+          <h3>半日 + 早午餐</h3>
+          <p>走 9 或 9-1 號來回約 1.5 小時，加上山腳小吃與茶飲，總耗時約 3–4 小時；可作為週間下班後的輕量方案。</p>
+        </article>
+        <article>
+          <h3>全日 + 兩段</h3>
+          <p>上午 4 號或 5 號（挑戰），下午 9 號（緩坡）做收尾。記得正午前完成主要爬升，午後保留體力走緩坡。</p>
+        </article>
+        <article>
+          <h3>親子 + 商圈</h3>
+          <p>走 9-1 號短程，下山後於商圈散步、用餐，總耗時約 2.5–3 小時；適合學齡前的孩子與長輩同行者。</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="content-section">
+    <div class="shell">
+      <p class="eyebrow">FAQ</p>
+      <h2>常見的行程問題</h2>
+      <div class="faq-list">
+        {faq.map(([q, a]) => (
+          <details>
+            <summary>{q}</summary>
+            <div>{a}</div>
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .page-hero { padding: 80px 0 30px; background: linear-gradient(180deg, #fcfaf5 0%, #f3efe5 100%); }
+  .page-hero h1 { font-family: Georgia, serif; color: var(--forest, #173f35); font-size: clamp(2rem, 4vw, 3rem); font-weight: 500; line-height: 1.1; margin: 14px 0 22px; }
+  .page-hero em { color: var(--wood, #b96f3b); font-style: italic; font-weight: 500; }
+  .page-hero p { color: var(--muted, #65706b); max-width: 720px; line-height: 1.9; }
+  .shell { max-width: 1200px; margin: 0 auto; padding: 0 22px; }
+  .eyebrow { color: var(--wood, #b96f3b); font-weight: 700; letter-spacing: 0.18em; font-size: 0.78rem; }
+
+  .content-section { padding: 60px 0; }
+  .content-section.alt { background: #f3efe5; }
+  .content-section h2 { font-family: Georgia, serif; color: var(--forest, #173f35); font-size: clamp(1.6rem, 3vw, 2.2rem); margin: 12px 0 24px; }
+
+  .itinerary-mix-grid { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 18px; }
+  .itinerary-mix-grid article { padding: 22px 24px; border-radius: 14px; background: #fcfaf5; border-left: 4px solid var(--wood, #b96f3b); }
+  .itinerary-mix-grid h3 { font-family: Georgia, serif; color: var(--forest, #173f35); font-size: 1.15rem; margin: 0 0 8px; }
+  .itinerary-mix-grid p { color: #394841; line-height: 1.85; margin: 0; font-size: 0.95rem; }
+
+  .faq-list details { padding: 14px 18px; border-bottom: 1px solid rgba(23,63,53,.1); }
+  .faq-list summary { font-weight: 700; color: var(--forest, #173f35); cursor: pointer; padding: 4px 0; }
+  .faq-list div { color: var(--muted, #65706b); line-height: 1.85; padding: 10px 0 0; }
+
+  @media (max-width: 980px) {
+    .itinerary-mix-grid { grid-template-columns: 1fr; }
+  }
+</style>

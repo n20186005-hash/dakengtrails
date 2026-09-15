@@ -3,12 +3,20 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import PageHero from '../../components/PageHero.astro';
 import SectionHeading from '../../components/SectionHeading.astro';
+import VisitorServices from '../../components/VisitorServices.astro';
 import { trails } from '../../data/trails';
 const title = '大坑步道停車攻略｜各登山口停車場與Google Maps導航';
 const description = '整理大坑1至11號與支線步道停車便利度、入口步行提醒、經補庫停車場與Google Maps導航，假日前先準備替代方案。';
 const parkingSorted = [...trails].sort((a, b) => b.parking - a.parking);
+const breadcrumbItems = [{ label: '首頁', href: '/' }, { label: '停車攻略', href: '/parking/' }];
+const faqList = [
+  ['第一次到大坑停哪裡？', '建議由經補庫停車場周邊出發，動線與下山後補給都比較清楚。'],
+  ['假日提早幾點到？', '熱門時段建議 8:00 前抵達；9–10 月連假多需要提前看通行情形。'],
+  ['車位已滿怎麼辦？', '改走鄰近入口或改搭大眾運輸；不建議占用產業道路、農路與居民出入口。'],
+];
+const faqSchema = faqList.map(([question, answer]) => ({ question, answer }));
 ---
-<BaseLayout title={title} description={description}>
+<BaseLayout title={title} description={description} breadcrumbs={breadcrumbItems} faqPage={faqSchema}>
   <Breadcrumbs items={[{ label: '停車攻略' }]} />
   <PageHero eyebrow="PARKING GUIDE" title="大坑步道停車，先看入口再找車位" description="停車便利度依步道差異很大。9號與9-1號可優先查看經補庫周邊；高地步道則要為窄路與有限空間預留彈性。" image="/images/trails/dakeng-3.jpg" imageAlt="大坑山區林蔭步道與山谷" compact />
 
@@ -50,4 +58,32 @@ const parkingSorted = [...trails].sort((a, b) => b.parking - a.parking);
       </div>
     </div>
   </section>
+
+  <section class="content-section alt">
+    <div class="shell">
+      <VisitorServices show={['parking', 'fuel', 'charging', 'water']} heading="週邊設施：停車、加油、充電、加水" eyebrow="FACILITIES NEAR TRAILS" />
+      <p class="services-foot" style="text-align: left;">想看完整設施類型（含餐飲、住宿、ATM、醫療等），請見<a href="/facilities/">週邊設施類型指南</a>。</p>
+    </div>
+  </section>
+
+  <section class="content-section">
+    <div class="shell">
+      <p class="eyebrow">FAQ</p>
+      <h2>停車常見問題</h2>
+      <div class="faq-list">
+        {faqList.map(([q, a]) => (
+          <details>
+            <summary>{q}</summary>
+            <div>{a}</div>
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
 </BaseLayout>
+
+<style>
+  .faq-list details { padding: 14px 18px; border-bottom: 1px solid rgba(23,63,53,.1); }
+  .faq-list summary { font-weight: 700; color: var(--forest, #173f35); cursor: pointer; padding: 4px 0; }
+  .faq-list div { color: var(--muted, #65706b); line-height: 1.85; padding: 10px 0 0; }
+</style>

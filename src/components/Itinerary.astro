@@ -1,0 +1,115 @@
+---
+/**
+ * 行程模板區塊：依不同對象（半日、全日、親子、攝影、無障礙）
+ * 顯示節奏、安全提醒、可替代版本。
+ */
+import { itineraries, type ItineraryGroup } from '../data/itineraries';
+
+interface Props {
+  show?: ItineraryGroup[];
+  showHeading?: boolean;
+  heading?: string;
+  eyebrow?: string;
+}
+
+const {
+  show,
+  showHeading = true,
+  heading = '行程節奏建議',
+  eyebrow = 'ITINERARIES',
+} = Astro.props;
+
+const order: ItineraryGroup[] = ['half-day', 'full-day', 'family', 'photography', 'accessible'];
+const items = (show && show.length > 0
+  ? order.filter((key) => show.includes(key))
+  : order
+).map((key) => itineraries.find((item) => item.slug === key)).filter((it): it is NonNullable<typeof it> => Boolean(it));
+---
+
+{showHeading && (
+  <header class="itinerary-head">
+    <p class="eyebrow">{eyebrow}</p>
+    <h2>{heading}</h2>
+    <p>以下行程以「節奏」與「對象」分類，不涉及任何特定店家或品牌推薦；用於規劃出發時間、行走節奏與下山後補給節點。</p>
+  </header>
+)}
+
+<div class="itinerary-grid">
+  {items.map((item) => (
+    <article class="itinerary-card">
+      <header>
+        <p class="eyebrow">{item.durationLabel}</p>
+        <h3>{item.label}</h3>
+        <p class="itinerary-description">{item.description}</p>
+      </header>
+      {item.meta && (
+        <dl class="itinerary-meta">
+          {item.meta.map((entry) => (
+            <div>
+              <dt>{entry.label}</dt>
+              <dd>{entry.value}</dd>
+            </div>
+          ))}
+        </dl>
+      )}
+      <ol class="itinerary-outline">
+        {item.outline.map((step) => (
+          <li>
+            <span class="itinerary-time">{step.time}</span>
+            <strong>{step.label}</strong>
+            {step.note && <small>{step.note}</small>}
+          </li>
+        ))}
+      </ol>
+      <div class="itinerary-safety">
+        <h4>安全提醒</h4>
+        <ul>
+          {item.safetyNotes.map((note) => <li>{note}</li>)}
+        </ul>
+      </div>
+      {item.alternatives && (
+        <div class="itinerary-alt">
+          <h4>替代方案</h4>
+          <ul>
+            {item.alternatives.map((alt) => (
+              <li>
+                <strong>{alt.label}</strong>
+                <span>{alt.detail}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+    </article>
+  ))}
+</div>
+
+<style>
+  .itinerary-head { max-width: 880px; margin: 0 auto 36px; }
+  .itinerary-head h2 { font-family: Georgia, serif; color: var(--forest, #173f35); font-size: clamp(1.7rem, 3vw, 2.4rem); margin: 12px 0 14px; line-height: 1.2; }
+  .itinerary-head p { color: var(--muted, #65706b); line-height: 1.85; }
+  .eyebrow { color: var(--wood, #b96f3b); font-weight: 700; letter-spacing: 0.18em; font-size: 0.78rem; }
+
+  .itinerary-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 22px; }
+  .itinerary-card { padding: 26px 28px; border-radius: 18px; background: #fcfaf5; border: 1px solid rgba(23,63,53,.1); display: flex; flex-direction: column; gap: 16px; }
+  .itinerary-card h3 { font-family: Georgia, serif; font-size: 1.3rem; margin: 6px 0 0; color: var(--forest, #173f35); }
+  .itinerary-description { color: var(--muted, #65706b); font-size: 0.94rem; line-height: 1.8; margin: 8px 0 0; }
+
+  .itinerary-meta { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 0; padding: 14px 16px; border-radius: 12px; background: #f3efe5; }
+  .itinerary-meta div { display: flex; flex-direction: column; gap: 2px; }
+  .itinerary-meta dt { color: var(--muted, #65706b); font-size: 0.74rem; letter-spacing: 0.12em; text-transform: uppercase; }
+  .itinerary-meta dd { color: var(--forest, #173f35); font-size: 0.92rem; font-weight: 600; margin: 0; }
+
+  .itinerary-outline { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+  .itinerary-outline li { padding: 10px 14px; border-left: 4px solid var(--wood, #b96f3b); background: #fcf4e8; border-radius: 0 12px 12px 0; display: grid; grid-template-columns: 64px 1fr; column-gap: 10px; row-gap: 2px; }
+  .itinerary-time { color: var(--wood-dark, #8b4f2a); font-weight: 700; font-size: 0.9rem; align-self: center; }
+  .itinerary-outline strong { color: var(--forest, #173f35); font-size: 0.96rem; }
+  .itinerary-outline small { color: var(--muted, #65706b); font-size: 0.82rem; line-height: 1.6; grid-column: 2 / 3; }
+
+  .itinerary-safety h4, .itinerary-alt h4 { font-size: 0.82rem; text-transform: uppercase; color: var(--wood-dark, #8b4f2a); letter-spacing: 0.16em; margin: 0 0 8px; }
+  .itinerary-safety ul, .itinerary-alt ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 6px; }
+  .itinerary-safety li { padding: 4px 0; color: #394841; font-size: 0.86rem; line-height: 1.7; }
+  .itinerary-alt li { padding: 6px 12px; background: #ede7da; border-radius: 8px; }
+  .itinerary-alt strong { display: block; color: var(--forest, #173f35); font-size: 0.88rem; }
+  .itinerary-alt span { color: var(--muted, #65706b); font-size: 0.82rem; line-height: 1.6; }
+</style>

@@ -12,6 +12,7 @@
     "deploy": "pnpm build && wrangler deploy"
   },
   "dependencies": {
+    "@astrojs/cloudflare": "^12.5.0",
     "@astrojs/mdx": "^4.3.4",
     "@astrojs/sitemap": "^3.5.1",
     "@tailwindcss/vite": "^4.1.11",

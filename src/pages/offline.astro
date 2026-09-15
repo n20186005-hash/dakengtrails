@@ -1,0 +1,33 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { attraction } from '../data/attraction';
+
+const title = `目前離線 - ${attraction.fullName} 大坑步道指南`;
+const description = '目前沒有網路連線，將自動回到線上後繼續瀏覽。';
+---
+
+<BaseLayout title={title} description={description} includeAttraction={false} noindex>
+  <section class="offline-shell">
+    <div class="shell">
+      <p class="eyebrow">YOU ARE OFFLINE</p>
+      <h1>{attraction.fullName}<br /><em>目前是離線狀態</em></h1>
+      <p>無法連線到伺服器，請檢查網路或重新載入此頁。<br />你先前的瀏覽紀錄仍可使用，連線恢復後即可自動重新整理。</p>
+      <div class="offline-actions">
+        <button class="button" onclick="window.location.reload()">重新嘗試連線</button>
+        <a class="button button-secondary" href="/">回到首頁</a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .offline-shell { padding: 100px 0; background: #fcfaf5; text-align: center; }
+  .offline-shell h1 { font-family: Georgia, serif; color: var(--forest, #173f35); font-size: clamp(2rem, 4vw, 3rem); margin: 18px 0 14px; }
+  .offline-shell em { color: var(--wood, #b96f3b); font-style: italic; }
+  .offline-shell p { color: var(--muted, #65706b); font-size: 1.05rem; line-height: 1.85; max-width: 520px; margin: 0 auto 28px; }
+  .offline-actions { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+  .button { display: inline-flex; align-items: center; gap: 8px; padding: 14px 26px; border-radius: 999px; background: var(--forest, #173f35); color: #fff; font-weight: 700; border: 0; cursor: pointer; }
+  .button-secondary { background: transparent; color: var(--forest, #173f35); border: 2px solid currentColor; }
+  .shell { max-width: 720px; margin: 0 auto; padding: 0 22px; }
+  .eyebrow { color: var(--wood, #b96f3b); font-weight: 700; letter-spacing: 0.18em; font-size: 0.78rem; }
+</style>

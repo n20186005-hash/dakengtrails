@@ -2,6 +2,13 @@
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import '../styles/global.css';
+import {
+  attraction,
+  attractionGeo,
+  attractionPostalAddress,
+  attractionSiteUrl,
+  touristAttractionSchema,
+} from '../data/attraction';
 
 interface Props {
   title: string;
@@ -10,31 +17,106 @@ interface Props {
   canonical?: string;
   schema?: Record<string, unknown> | Record<string, unknown>[];
   noindex?: boolean;
+  /** 對單一路由加上該頁所屬的 BreadcrumbList */
+  breadcrumbs?: { label: string; href?: string }[];
+  /** 注入 FAQPage 結構化資料（標準 FAQ schema） */
+  faqPage?: { question: string; answer: string }[];
+  /** 是否輸出完整 TouristAttraction schema（實體引用） */
+  includeAttraction?: boolean;
+  /** 強制 og:type */
+  ogType?: 'website' | 'article';
+  /** 設定 og:image 用 alt */
+  imageAlt?: string;
 }
 
 const {
   title,
   description,
-  image = '/images/meta/dakeng-og.jpg',
+  image = '/images/trails/dakeng-4.jpg',
   canonical,
   schema,
   noindex = false,
+  breadcrumbs,
+  faqPage,
+  includeAttraction = true,
+  ogType = 'website',
+  imageAlt = `${attraction.fullName} - Main view in ${attraction.city}`,
 } = Astro.props;
 
-const site = Astro.site ?? new URL('https://dakengtrails.com');
+const site = Astro.site ?? new URL(attractionSiteUrl);
 const canonicalUrl = canonical
   ? new URL(canonical, site)
   : new URL(Astro.url.pathname, site);
 const imageUrl = new URL(image, site);
 
-const defaultSchema = {
+const baseSchema = {
   '@context': 'https://schema.org',
   '@type': 'WebSite',
+  '@id': `${attractionSiteUrl}#website`,
   name: 'Dakeng Trails 大坑步道指南',
-  url: site.toString(),
+  url: attractionSiteUrl,
   inLanguage: 'zh-Hant-TW',
   description,
+  publisher: { '@type': 'Organization', name: 'Dakeng Trails', url: attractionSiteUrl },
 };
+
+const organization = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  '@id': `${attractionSiteUrl}#org`,
+  name: 'Dakeng Trails',
+  url: attractionSiteUrl,
+  logo: {
+    '@type': 'ImageObject',
+    url: `${attractionSiteUrl}icons/icon-512.png`,
+    width: 512,
+    height: 512,
+  },
+  sameAs: [attraction.googleMapsShareUrl, attraction.officialTourismUrl],
+};
+
+const schemas: Record<string, unknown>[] = [baseSchema, organization];
+
+if (includeAttraction) {
+  // 完整 TouristAttraction schema（含 @id / address / geo / hasMap / sameAs），
+  // 但不寫入 Google 評分，避免冒充官方。
+  schemas.push({ ...touristAttractionSchema, description });
+}
+
+const breadcrumbItems = [
+  { label: '首頁', href: '/' },
+  ...(breadcrumbs ?? []),
+];
+if (breadcrumbItems.length > 1) {
+  schemas.push({
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: breadcrumbItems.map((crumb, index) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      name: crumb.label,
+      ...(crumb.href ? { item: new URL(crumb.href, site).toString() } : {}),
+    })),
+  });
+}
+
+if (faqPage && faqPage.length > 0) {
+  schemas.push({
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqPage.map((item) => ({
+      '@type': 'Question',
+      name: item.question,
+      acceptedAnswer: { '@type': 'Answer', text: item.answer },
+    })),
+  });
+}
+
+if (schema) {
+  schemas.push(...(Array.isArray(schema) ? schema : [schema]));
+}
+
+const gaId = 'G-HXM22WWPKP';
 ---
 
 <!doctype html>
@@ -46,35 +128,72 @@ const defaultSchema = {
     <title>{title}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonicalUrl} />
+
+    <!-- Favicon & PWA -->
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png" />
+    <link rel="apple-touch-icon" href="/icons/icon-192.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="Dakeng Trails" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="application-name" content="Dakeng Trails" />
+    <meta name="msapplication-TileColor" content="#173f35" />
+
     {noindex && <meta name="robots" content="noindex,nofollow" />}
 
-    <meta property="og:type" content="website" />
+    <!-- Open Graph -->
+    <meta property="og:type" content={ogType} />
     <meta property="og:locale" content="zh_TW" />
     <meta property="og:site_name" content="Dakeng Trails 大坑步道指南" />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonicalUrl} />
     <meta property="og:image" content={imageUrl} />
-    <meta property="og:image:alt" content="臺中大坑步道山林與木棧階梯" />
+    <meta property="og:image:alt" content={imageAlt} />
+    <meta property="og:image:width" content="1800" />
+    <meta property="og:image:height" content="1350" />
+    <meta property="og:locale:alternate" content="en_US" />
 
+    <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={imageUrl} />
+    <meta name="twitter:image:alt" content={imageAlt} />
 
     <!-- Google tag (gtag.js) -->
-    <script is:inline async src="https://www.googletagmanager.com/gtag/js?id=G-HXM22WWPKP"></script>
-    <script is:inline>
+    <script is:inline async src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`}></script>
+    <script is:inline define:vars={{ gaId }}>
       window.dataLayer = window.dataLayer || [];
       function gtag() {
         dataLayer.push(arguments);
       }
       gtag('js', new Date());
-      gtag('config', 'G-HXM22WWPKP');
+      gtag('config', gaId, { send_page_view: true });
     </script>
 
-    <script is:inline type="application/ld+json" set:html={JSON.stringify(schema ?? defaultSchema)} />
+    <!-- Service Worker -->
+    <script is:inline>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker
+            .register('/sw.js', { scope: '/' })
+            .catch(() => {});
+        });
+      }
+    </script>
+
+    <!-- JSON-LD Structured Data -->
+    {
+      schemas.map((entry) => (
+        <script
+          is:inline
+          type="application/ld+json"
+          set:html={JSON.stringify(entry)}
+        />
+      ))
+    }
   </head>
   <body>
     <a class="skip-link" href="#main-content">跳到主要內容</a>
@@ -83,5 +202,23 @@ const defaultSchema = {
       <slot />
     </main>
     <Footer />
+    <!-- 評分摘要位置：頁面內容會使用評價區塊，這是給予 ATS / 結構化爬蟲保留資料的輔助 -->
+    <span class="visually-hidden" aria-hidden="true">
+      {attraction.fullName} · 評分 {attraction.rating.score}/5 · {attraction.rating.reviewCount.toLocaleString('en-US')} 則 Google 地圖評價 · 同步 {attraction.rating.syncedAt}
+    </span>
   </body>
 </html>
+
+<style>
+  .visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    border: 0;
+    white-space: nowrap;
+  }
+</style>

@@ -1,0 +1,90 @@
+---
+/**
+ * 訪客責任與科普內容區塊
+ * 以 LNT 七原則與在地經驗為核心，建立「進入山林前」與「下山前」check
+ * 同時提醒登山者的 SOP
+ */
+import { visitorResponsibilities } from '../data/history';
+import { facilityChecklist } from '../data/visitorServices';
+
+interface Props {
+  showHeading?: boolean;
+  heading?: string;
+  eyebrow?: string;
+  body?: string;
+}
+
+const {
+  showHeading = true,
+  heading = '訪客責任與科普',
+  eyebrow = 'RESPONSIBILITY & ETIQUETTE',
+  body = '大坑是城市近郊的共同空間。每位訪客的行為都會直接影響後續體驗，整理以下六項基本原則供參考。',
+} = Astro.props;
+---
+
+{showHeading && (
+  <header class="resp-head">
+    <p class="eyebrow">{eyebrow}</p>
+    <h2>{heading}</h2>
+    <p>{body}</p>
+  </header>
+)}
+
+<div class="resp-grid">
+  <section class="resp-list">
+    <h3>訪客的基本原則</h3>
+    <ol>
+      {visitorResponsibilities.map((item) => (
+        <li>
+          <span class="resp-number">{String(visitorResponsibilities.indexOf(item) + 1).padStart(2, '0')}</span>
+          <div>
+            <strong>{item.title}</strong>
+            <p>{item.detail}</p>
+          </div>
+        </li>
+      ))}
+    </ol>
+  </section>
+
+  <section class="resp-checklist">
+    <h3>出門前 5 項設施檢核</h3>
+    <ul>
+      {facilityChecklist.map((item, index) => (
+        <li>
+          <span class="resp-check">{index + 1}</span>
+          <div>
+            <strong>{item.label}</strong>
+            <small>{item.desc}</small>
+          </div>
+        </li>
+      ))}
+    </ul>
+  </section>
+</div>
+
+<style>
+  .resp-head { max-width: 880px; margin: 0 auto 36px; }
+  .resp-head h2 { font-family: Georgia, serif; color: var(--forest, #173f35); font-size: clamp(1.7rem, 3vw, 2.4rem); margin: 12px 0 14px; line-height: 1.2; }
+  .resp-head p { color: var(--muted, #65706b); line-height: 1.85; }
+  .eyebrow { color: var(--wood, #b96f3b); font-weight: 700; letter-spacing: 0.18em; font-size: 0.78rem; }
+
+  .resp-grid { display: grid; grid-template-columns: 1.2fr 1fr; gap: 30px; }
+  .resp-list, .resp-checklist { padding: 28px; border-radius: 18px; background: #fcfaf5; border: 1px solid rgba(23,63,53,.1); }
+  .resp-list h3, .resp-checklist h3 { font-family: Georgia, serif; color: var(--forest, #173f35); font-size: 1.25rem; margin: 0 0 16px; }
+
+  .resp-list ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 14px; counter-reset: resp; }
+  .resp-list ol li { display: grid; grid-template-columns: 44px 1fr; gap: 14px; padding: 14px 16px; border-radius: 12px; background: #f3efe5; }
+  .resp-number { color: var(--wood-dark, #8b4f2a); font-family: Georgia, serif; font-size: 1.3rem; font-weight: 700; align-self: start; }
+  .resp-list strong { display: block; color: var(--forest, #173f35); font-size: 1.02rem; margin-bottom: 4px; }
+  .resp-list p { margin: 0; color: #394841; font-size: 0.92rem; line-height: 1.75; }
+
+  .resp-checklist ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+  .resp-checklist li { display: grid; grid-template-columns: 36px 1fr; gap: 12px; align-items: center; padding: 12px 14px; border-radius: 10px; background: #fcf4e8; }
+  .resp-check { display: grid; place-items: center; width: 36px; height: 36px; border-radius: 50%; background: var(--wood, #b96f3b); color: #fff; font-family: Georgia, serif; font-weight: 700; }
+  .resp-checklist strong { color: var(--forest, #173f35); font-size: 0.95rem; display: block; }
+  .resp-checklist small { color: var(--muted, #65706b); font-size: 0.82rem; line-height: 1.6; }
+
+  @media (max-width: 980px) {
+    .resp-grid { grid-template-columns: 1fr; }
+  }
+</style>

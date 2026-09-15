@@ -3,8 +3,10 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import PageHero from '../../components/PageHero.astro';
 import SectionHeading from '../../components/SectionHeading.astro';
+import HistoryBlock from '../../components/HistoryBlock.astro';
+import Responsibility from '../../components/Responsibility.astro';
 const title = '關於Dakeng Trails｜大坑步道指南';
-const description = 'Dakeng Trails 把臺中大坑14條登山步道整理成好用的選擇、比較、停車、交通與Google Maps導航工具。';
+const description = 'Dakeng Trails 把臺中大坑14條登山步道整理成好用的選擇、比較、停車、交通與Google Maps導航工具，並補上歷史、設施、責任與即時氣象等科普內容。';
 ---
 <BaseLayout title={title} description={description}>
   <Breadcrumbs items={[{ label: '關於本站' }]} />
@@ -17,6 +19,14 @@ const description = 'Dakeng Trails 把臺中大坑14條登山步道整理成好�
         <p>因此本站不以「大坑風景區介紹」為終點，而是從實際出發流程整理內容：先選步道，再確認入口、停車或公車，最後開啟導航。</p>
         <h2>內容怎麼設計？</h2>
         <p>每一頁先回答最重要的問題，再補充路面、體力、交通與注意事項。距離與時間用約數呈現，不把可能快速變動的評分、人潮、停車空位或開放狀態寫成永久資料。</p>
+        <h2>我們也補上這些內容</h2>
+        <ul>
+          <li>即時氣象與七日預報整合（<a href="/weather/">氣象頁</a>），協助判斷是否該帶傘或提早出發。</li>
+          <li>四季遊覽策略（<a href="/seasons/">四季策略</a>），以中央氣象署常年均態與在地經驗為基礎。</li>
+          <li>行程節奏模板（<a href="/itinerary/">行程節奏</a>），以「對象 × 時間」區分，沒有商業推薦。</li>
+          <li>週邊設施類型指南（<a href="/facilities/">設施指南</a>），維持中立，僅列出類型與常見位置。</li>
+          <li>歷史背景與地名由來（<a href="/history/">歷史頁</a>），整理自公開資料中的常見說法。</li>
+        </ul>
         <h2>品牌名稱</h2>
         <p><strong>Dakeng Trails｜大坑步道指南</strong></p>
         <p>品牌標語是「選對步道，找到入口，直接出發。」</p>
@@ -27,7 +37,20 @@ const description = 'Dakeng Trails 把臺中大坑14條登山步道整理成好�
         <div><span>02</span><strong>方便比較</strong><small>同一頁看難度、時間與交通</small></div>
         <div><span>03</span><strong>可以出發</strong><small>每條步道都有具體地圖操作</small></div>
         <div><span>04</span><strong>保留彈性</strong><small>提醒現場狀況與備選路線</small></div>
+        <div><span>05</span><strong>中立呈現</strong><small>設施與店家僅列類型</small></div>
       </aside>
+    </div>
+  </section>
+
+  <section class="content-section alt">
+    <div class="shell">
+      <HistoryBlock heading="歷史背景（概要）" eyebrow="HISTORY" />
+    </div>
+  </section>
+
+  <section class="content-section">
+    <div class="shell">
+      <Responsibility showHeading={true} heading="訪客責任（通用 SOP）" eyebrow="RESPONSIBILITY · ETIQUETTE" />
     </div>
   </section>
   <section class="content-section alt">

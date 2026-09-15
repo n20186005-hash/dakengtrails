@@ -1,41 +1,199 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import Breadcrumbs from '../../components/Breadcrumbs.astro';
-import PageHero from '../../components/PageHero.astro';
-const title = '圖片與資料來源｜Dakeng Trails';
-const description = 'Dakeng Trails使用的大坑步道實景照片授權、攝影者、Wikimedia Commons原始檔與主要資料來源。';
-const photos = [
-  ['dakeng-1.jpg', '大坑登山步道入口', 'Dakeng Hiking Trail 大坑登山步道 - panoramio.jpg', 'https://commons.wikimedia.org/wiki/File:Dakeng_Hiking_Trail_%E5%A4%A7%E5%9D%91%E7%99%BB%E5%B1%B1%E6%AD%A5%E9%81%93_-_panoramio.jpg'],
-  ['dakeng-2.jpg', '大坑林蔭階梯', '大坑步道 Dakeng Hiking Trail - panoramio.jpg', 'https://commons.wikimedia.org/wiki/File:%E5%A4%A7%E5%9D%91%E6%AD%A5%E9%81%93_Dakeng_Hiking_Trail_-_panoramio.jpg'],
-  ['dakeng-3.jpg', '大坑山林景觀', '大坑登山步道 Dakeng Hiking Trail - panoramio.jpg', 'https://commons.wikimedia.org/wiki/File:%E5%A4%A7%E5%9D%91%E7%99%BB%E5%B1%B1%E6%AD%A5%E9%81%93_Dakeng_Hiking_Trail_-_panoramio.jpg'],
-  ['dakeng-4.jpg', '大坑木棧階梯與健行者', '大坑登山步道 Dakeng Hiking Trail - panoramio (1).jpg', 'https://commons.wikimedia.org/wiki/File:%E5%A4%A7%E5%9D%91%E7%99%BB%E5%B1%B1%E6%AD%A5%E9%81%93_Dakeng_Hiking_Trail_-_panoramio_(1).jpg'],
-  ['dakeng-5.jpg', '大坑林間木棧與岩石', '大坑登山步道 Dakeng Hiking Trail - panoramio (2).jpg', 'https://commons.wikimedia.org/wiki/File:%E5%A4%A7%E5%9D%91%E7%99%BB%E5%B1%B1%E6%AD%A5%E9%81%93_Dakeng_Hiking_Trail_-_panoramio_(2).jpg'],
+import ImageCopyright from '../../components/ImageCopyright.astro';
+import { dataSources, photos } from '../../data/sources';
+import { attraction, googleMapsLinks } from '../../data/attraction';
+
+const title = `資料與圖片來源 - ${attraction.fullName} 大坑步道指南`;
+const description = `${attraction.fullName}（Dakeng Trails）所有引用資料與圖片的來源彙整：評價於 2026 年 9 月同步自 Google 地圖使用者評價。`;
+
+// 簡單地把同類來源分區，分區對應 Section
+const groupedSources = {
+  official: dataSources.filter((src) => src.category === 'official'),
+  tourism: dataSources.filter((src) => src.category === 'tourism'),
+  reviews: dataSources.filter((src) => src.category === 'reviews'),
+  map: dataSources.filter((src) => src.category === 'map-doc' || src.category === 'transit'),
+};
+
+const breadcrumb = [
+  { label: '首頁', href: '/' },
+  { label: '資料與圖片來源' },
 ];
 ---
-<BaseLayout title={title} description={description}>
-  <Breadcrumbs items={[{ label: '圖片與資料來源' }]} />
-  <PageHero eyebrow="SOURCES & CREDITS" title="圖片與資料來源" description="照片使用大坑步道實景，並保留攝影者、授權與原始檔連結；路線資料優先連回可在出發前再次確認的來源。" compact />
-  <section class="content-section">
+
+<BaseLayout title={title} description={description} breadcrumbs={breadcrumb} includeAttraction={false}>
+  <section class="page-hero">
     <div class="shell">
-      <div class="source-intro callout">以下5張照片皆由攝影者 lienyuan lee 拍攝，來源為 Wikimedia Commons，依 CC BY 3.0 授權使用；本站進行尺寸壓縮與版面裁切。</div>
-      <div class="source-grid">
-        {photos.map(([file, alt, original, url]) => (
-          <article>
-            <img src={`/images/trails/${file}`} alt={alt} width="1800" height="1350" loading="lazy" />
-            <div><h2>{alt}</h2><p>{original}</p><p>攝影：lienyuan lee · CC BY 3.0</p><a href={url} target="_blank" rel="license noopener">查看原始檔與授權 ↗</a></div>
-          </article>
-        ))}
+      <p class="eyebrow">SOURCES & ATTRIBUTION</p>
+      <h1>{attraction.fullName}<br /><em>資料與圖片來源</em></h1>
+      <p>本站資訊以可驗證的官方、開放資料與使用者內容為基礎。本頁整理所有引用來源、版權與同步時間。</p>
+    </div>
+  </section>
+
+  <!-- Google Maps reviews · 同步時間 -->
+  <section class="sources-section reviews-source">
+    <div class="shell">
+      <p class="eyebrow">同步的評價來源</p>
+      <h2>Google 地圖使用者評價 · 同步時間 2026 年 9 月</h2>
+      <p>本頁顯示的評分、精選評價與評價數，來源說明、同步時間與最新內容請以下列 Google 地圖頁面為準：</p>
+      <ul class="reviews-source-list">
+        <li><strong>同步來源：</strong>Google 地圖使用者評價（Google Maps, public reviews）</li>
+        <li><strong>同步時間：</strong>2026 年 9 月</li>
+        <li><strong>版權：</strong>同步自 Google 地圖使用者評價，同步時間 2026 年 9 月；版權歸原作者與 Google 地圖所有</li>
+        <li>
+          <strong>原始連結：</strong>
+          <a href={googleMapsLinks.allReviews} target="_blank" rel="noopener noreferrer nofollow">
+            在谷歌地圖查看全部評價 ↗
+          </a>
+        </li>
+      </ul>
+      <a class="button" href={googleMapsLinks.allReviews} target="_blank" rel="noopener noreferrer nofollow">
+        在谷歌地圖查看全部評價
+      </a>
+    </div>
+  </section>
+
+  <section class="sources-grid">
+    <div class="shell">
+      <p class="eyebrow">DATA SOURCES</p>
+      <h2>依類別瀏覽</h2>
+      <div class="sources-categories">
+        <article>
+          <h3>官方與管理單位</h3>
+          <ul>
+            {groupedSources.official.map((src) => (
+              <li>
+                <a href={src.href} target="_blank" rel="noopener noreferrer">{src.title} ↗</a>
+                <span>{src.description}</span>
+              </li>
+            ))}
+          </ul>
+        </article>
+        <article>
+          <h3>旅遊推廣</h3>
+          <ul>
+            {groupedSources.tourism.map((src) => (
+              <li>
+                <a href={src.href} target="_blank" rel="noopener noreferrer">{src.title} ↗</a>
+                <span>{src.description}</span>
+              </li>
+            ))}
+          </ul>
+        </article>
+        <article>
+          <h3>地圖與評價</h3>
+          <ul>
+            {groupedSources.reviews.concat(groupedSources.map).map((src) => (
+              <li>
+                <a href={src.href} target="_blank" rel="noopener noreferrer">{src.title} ↗</a>
+                <span>{src.description}{src.syncedAt ? ` · 同步時間 ${src.syncedAt}` : ''}</span>
+              </li>
+            ))}
+          </ul>
+        </article>
       </div>
     </div>
   </section>
-  <section class="content-section alt">
+
+  <section class="sources-photos">
     <div class="shell">
-      <h2 class="source-heading">主要資料來源</h2>
-      <div class="source-links">
-        <a href="https://www.scenic.taichung.gov.tw/833821/833844/833845/3040068" target="_blank" rel="noopener"><strong>大坑步道通行情形</strong><span>臺中市風景區管理所 ↗</span></a>
-        <a href="https://travel.taichung.gov.tw/zh-tw/attractions/intro/419" target="_blank" rel="noopener"><strong>大坑風景區</strong><span>臺中觀光旅遊網 ↗</span></a>
-        <a href="https://developers.google.com/maps/documentation/urls/get-started" target="_blank" rel="noopener"><strong>Google Maps URLs</strong><span>Google for Developers ↗</span></a>
-      </div>
+      <p class="eyebrow">PHOTO CREDITS</p>
+      <h2>圖片與授權</h2>
+      <p>本站圖片以 CC BY 3.0 或同等開源授權引用，完整檔名與原始頁面如附：</p>
+
+      <table class="credits-table">
+        <thead>
+          <tr><th>顯示檔名</th><th>取代文字</th><th>原始檔名</th><th>授權頁面</th></tr>
+        </thead>
+        <tbody>
+          {photos.map((photo) => (
+            <tr>
+              <td><code>{photo.file}</code></td>
+              <td>{photo.alt}</td>
+              <td>{photo.original}</td>
+              <td><a href={photo.url} target="_blank" rel="noopener noreferrer">Wikimedia Commons ↗</a></td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+
+      <ImageCopyright title="圖片版權與聯絡" />
+    </div>
+  </section>
+
+  <section class="sources-meta">
+    <div class="shell">
+      <p class="eyebrow">METHODOLOGY</p>
+      <h2>資料引用與更新方式</h2>
+      <ul>
+        <li>評分與精選評價採手動同步；內容僅作頁面顯示，不會冒充為景點官方評分。</li>
+        <li>位置資訊以 Google Maps 分享連結與官方地址為主要依據，並以郵政編碼核對。</li>
+        <li>步道分級、距離與時間經常變動，請以<a href="https://www.scenic.taichung.gov.tw/833821/833844/833845/3040068" target="_blank" rel="noopener noreferrer">官網通行情形</a>為準。</li>
+        <li>外連包含政府、Google、社群與基金會等可驗證來源；圖片若需商用請依原授權要求辦理。</li>
+      </ul>
     </div>
   </section>
 </BaseLayout>
+
+<style>
+  .page-hero {
+    padding: 80px 0 40px;
+    background: linear-gradient(180deg, #fcfaf5 0%, #f3efe5 100%);
+  }
+  .page-hero h1 { font-family: Georgia, serif; color: var(--forest, #173f35); font-size: clamp(2rem, 4vw, 3.4rem); font-weight: 500; line-height: 1.1; margin: 14px 0 22px; }
+  .page-hero em { color: var(--wood, #b96f3b); font-style: italic; font-weight: 500; }
+  .eyebrow { color: var(--wood, #b96f3b); font-weight: 700; letter-spacing: 0.18em; font-size: 0.78rem; }
+  .shell { max-width: 1200px; margin: 0 auto; padding: 0 22px; }
+
+  .reviews-source { padding: 60px 0; background: #fcf9f1; border-top: 1px solid rgba(23,63,53,.08); border-bottom: 1px solid rgba(23,63,53,.08); }
+  .reviews-source h2 { font-family: Georgia, serif; color: var(--forest, #173f35); font-size: clamp(1.5rem, 3vw, 2.2rem); margin: 12px 0 14px; }
+  .reviews-source-list { padding-left: 1.2em; margin: 0 0 22px; color: #394841; line-height: 1.85; }
+  .reviews-source-list li { margin-bottom: 6px; }
+
+  .sources-section { padding: 60px 0; background: #fcfaf5; }
+  .sources-section h2 { font-family: Georgia, serif; color: var(--forest, #173f35); font-size: clamp(1.5rem, 3vw, 2.2rem); margin: 12px 0 14px; }
+  .sources-section p { color: #394841; line-height: 1.8; }
+
+  .sources-categories { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; padding-top: 30px; }
+  .sources-categories article h3 { margin: 0 0 14px; color: var(--forest, #173f35); font-size: 1.15rem; }
+  .sources-categories ul { margin: 0; padding: 0; list-style: none; }
+  .sources-categories li { padding: 14px 0; border-bottom: 1px dashed rgba(23,63,53,.16); }
+  .sources-categories li:last-child { border-bottom: 0; }
+  .sources-categories li a { color: var(--wood-dark, #8b4f2a); font-weight: 700; display: block; margin-bottom: 4px; }
+  .sources-categories li span { color: var(--muted, #65706b); font-size: 0.86rem; line-height: 1.7; }
+
+  .sources-photos { padding: 60px 0; background: #f3efe5; }
+  .sources-photos h2 { font-family: Georgia, serif; color: var(--forest, #173f35); font-size: clamp(1.5rem, 3vw, 2.2rem); margin: 12px 0 14px; }
+  .credits-table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 14px; overflow: hidden; box-shadow: 0 18px 40px -28px rgba(23,63,53,.4); margin: 20px 0; }
+  .credits-table th, .credits-table td { text-align: left; padding: 12px 16px; font-size: 0.88rem; border-bottom: 1px solid rgba(23,63,53,.08); vertical-align: top; }
+  .credits-table th { background: var(--forest, #173f35); color: #fcfaf5; font-weight: 700; }
+  .credits-table code { background: #f3efe5; padding: 2px 8px; border-radius: 6px; font-size: 0.8rem; color: var(--forest, #173f35); }
+  .credits-table a { color: var(--wood-dark, #8b4f2a); font-weight: 700; }
+
+  .sources-meta { padding: 60px 0 100px; }
+  .sources-meta h2 { font-family: Georgia, serif; color: var(--forest, #173f35); font-size: clamp(1.5rem, 3vw, 2.2rem); margin: 12px 0 14px; }
+  .sources-meta ul { padding-left: 1.1em; color: #394841; line-height: 1.85; }
+
+  .button {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 28px;
+    border-radius: 999px;
+    background: var(--forest, #173f35);
+    color: #fff;
+    font-weight: 700;
+    text-decoration: none;
+    transition: transform 0.18s ease, background 0.18s ease;
+  }
+  .button:hover { background: var(--wood-dark, #8b4f2a); transform: translateY(-1px); }
+  .button-secondary { background: transparent; color: var(--forest, #173f35); border: 2px solid currentColor; }
+
+  @media (max-width: 980px) {
+    .sources-categories { grid-template-columns: 1fr; }
+    .credits-table, .credits-table thead, .credits-table tbody, .credits-table tr, .credits-table td, .credits-table th { display: block; }
+    .credits-table tr { margin-bottom: 14px; background: #fff; border-radius: 10px; }
+    .credits-table td, .credits-table th { border: none; padding: 10px 14px; }
+    .credits-table th { background: var(--forest, #173f35); color: #fff; }
+  }
+</style>

@@ -1,0 +1,150 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import WeatherPanel from '../components/WeatherPanel.astro';
+import { loadWeather } from '../lib/weather';
+import { attraction } from '../data/attraction';
+
+export const prerender = false;
+
+const title = `即時氣象・智能建議・七日預報 - ${attraction.fullName}`;
+const description = `${attraction.fullName}即時溫度、體感、風速、降雨與七日預報；針對山區步道自動輸出「風險提醒・出行穿搭・遊玩安排・隨身物品」四類建議。`;
+
+const breadcrumb = [
+  { label: '首頁', href: '/' },
+  { label: '即時氣象' },
+];
+
+const faq = [
+  ['要帶傘嗎？', '降雨機率 60% 以上、雨量 ≥ 2.5mm 或預報有雷雨時，建議攜帶雨衣或折疊傘。'],
+  ['雷雨可以登山嗎？', '不建議。雷雨當下請避開稜線、空曠地與獨立大樹，並延期或改為室內行程。'],
+  ['山區的體感差很多嗎？', '海拔不高時體感主要差在風速與遮蔭，林蔭少處比林蔭下高 3–5°C，風大時偏冷。'],
+  ['大霧怎麼辦？', '能見度差容易迷向，請攜帶頭燈、定位裝置與伴走者，並避免進入無訊號的稜線段。'],
+];
+
+let bundle = null;
+let fetchError = null;
+try {
+  bundle = await loadWeather();
+} catch (error) {
+  fetchError = error instanceof Error ? error.message : 'unknown';
+}
+
+const weatherSchema = bundle ? {
+  '@context': 'https://schema.org',
+  '@type': 'WebPage',
+  name: title,
+  url: `https://${attraction.domain}/weather/`,
+  inLanguage: 'zh-Hant-TW',
+  isPartOf: {
+    '@type': 'WebSite',
+    url: `https://${attraction.domain}/`,
+    name: 'Dakeng Trails 大坑步道指南',
+  },
+} : null;
+---
+
+<BaseLayout title={title} description={description} breadcrumbs={breadcrumb} schema={weatherSchema} faqPage={faq.map(([q, a]) => ({ question: q, answer: a }))}>
+  <section class="page-hero">
+    <div class="shell">
+      <p class="eyebrow">WEATHER · SMART ADVICE</p>
+      <h1>{attraction.fullName}<br /><em>即時氣象・智能建議・七日預報</em></h1>
+      <p>出門前真正在意的兩件事：會不會下雨、該怎麼穿。本頁結合即時溫度、體感、風速、降雨、紫外線與七日預報，自動產出「風險提醒 / 出行穿搭 / 遊玩安排 / 隨身物品」四類建議，並針對山區步道補充能見度、稜線風勢與雨後濕滑等實務提醒。</p>
+    </div>
+  </section>
+
+  <WeatherPanel bundle={bundle} />
+
+  <section class="content-section alt">
+    <div class="shell">
+      <p class="eyebrow">OUTDOOR SCENARIO TIPS</p>
+      <h2>山區場景的氣象互動</h2>
+      <div class="weather-tips">
+        <article>
+          <h3>雨前、雨中、雨後</h3>
+          <p>雨前可走；雨中等雨勢趨緩或換上雨衣放慢；雨後 24 小時圓木與岩面濕滑，是最常見的受傷情境。請務必評估折返或改走階梯較少的支線。</p>
+        </article>
+        <article>
+          <h3>山區體感與遮蔭</h3>
+          <p>海拔 200–800 公尺區段，體感主要受林蔭與風速影響。林蔭少處比林蔭下高 3–5°C；風大時偏冷，建議隨身多帶一件薄外套。</p>
+        </article>
+        <article>
+          <h3>午後對流與雷擊</h3>
+          <p>夏秋之際午後常有雷陣風或雷擊，建議於中午前完成主要爬升段，並評估於下午 4 點前下山。雷雨當下絕對不要停留在稜線或獨立大樹下。</p>
+        </article>
+        <article>
+          <h3>霧季與能見度</h3>
+          <p>冬春交界清晨山區經常起霧，視野不佳時請拉開彼此距離、攜帶頭燈與定位裝置，並避免進入無訊號的稜線段。</p>
+        </article>
+        <article>
+          <h3>雲海與展望</h3>
+          <p>水氣充足且風弱時，5–8 號步道稜線段有機會看到雲海；建議清晨出發，並攜帶保暖衣物與防風外套。</p>
+        </article>
+        <article>
+          <h3>山洪與邊坡</h3>
+          <p>短時強降雨後 1–2 小時內，山溝與低窪路段易有山洪與土石流風險；請避開施工中或標示「崩塌危險」的路段，並留意步道邊坡落石。</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="content-section">
+    <div class="shell">
+      <p class="eyebrow">FAQ · WEATHER</p>
+      <h2>常見的氣象問題</h2>
+      <div class="faq-list">
+        {faq.map(([q, a]) => (
+          <details>
+            <summary>{q}</summary>
+            <div>{a}</div>
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="content-section alt">
+    <div class="shell">
+      <p class="eyebrow">REFERENCE</p>
+      <h2>延伸參考</h2>
+      <ul class="ref-list">
+        <li>中央氣象署<a href="https://www.cwb.gov.tw" target="_blank" rel="noopener noreferrer">全臺最新天氣預報 ↗</a></li>
+        <li>中央氣象署<a href="https://www.cwb.gov.tw/V8/C/W/observation/observation.html" target="_blank" rel="noopener noreferrer">即時觀測資料 ↗</a></li>
+        <li>颱風與豪雨期間建議同步參考<a href="https://www.scenic.taichung.gov.tw/833821/833844/833845/3040068" target="_blank" rel="noopener noreferrer">步道通行情形 ↗</a></li>
+      </ul>
+      {fetchError && <p class="error-note">本次資料更新發生錯誤：{fetchError}。請稍候重試。</p>}
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .page-hero { padding: 80px 0 30px; background: linear-gradient(180deg, #fcfaf5 0%, #f3efe5 100%); }
+  .page-hero h1 { font-family: Georgia, serif; color: var(--forest, #173f35); font-size: clamp(2rem, 4vw, 3rem); font-weight: 500; line-height: 1.1; margin: 14px 0 18px; }
+  .page-hero em { color: var(--wood, #b96f3b); font-style: italic; font-weight: 500; }
+  .page-hero p { color: var(--muted, #65706b); max-width: 720px; line-height: 1.85; }
+  .shell { max-width: 1200px; margin: 0 auto; padding: 0 22px; }
+  .eyebrow { color: var(--wood, #b96f3b); font-weight: 700; letter-spacing: 0.18em; font-size: 0.78rem; }
+
+  .content-section { padding: 60px 0; }
+  .content-section.alt { background: #f3efe5; }
+  .content-section h2 { font-family: Georgia, serif; color: var(--forest, #173f35); font-size: clamp(1.6rem, 3vw, 2.2rem); margin: 12px 0 24px; }
+
+  .weather-tips { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 22px; }
+  .weather-tips article { padding: 24px 26px; border-radius: 16px; background: #fcfaf5; border: 1px solid rgba(23,63,53,.08); }
+  .weather-tips h3 { font-family: Georgia, serif; color: var(--forest, #173f35); font-size: 1.18rem; margin: 0 0 10px; }
+  .weather-tips p { color: #394841; font-size: 0.94rem; line-height: 1.85; margin: 0; }
+
+  .faq-list details { padding: 14px 18px; border-bottom: 1px solid rgba(23,63,53,.1); }
+  .faq-list summary { font-weight: 700; color: var(--forest, #173f35); cursor: pointer; padding: 4px 0; }
+  .faq-list div { color: var(--muted, #65706b); line-height: 1.85; padding: 10px 0 0; }
+
+  .ref-list { padding-left: 1.1em; color: #394841; line-height: 1.95; }
+  .ref-list a { color: var(--wood-dark, #8b4f2a); font-weight: 700; border-bottom: 1px solid currentColor; }
+  .error-note { margin-top: 18px; padding: 14px 18px; background: #f4e1de; border-radius: 10px; color: #6b2e25; }
+
+  @media (max-width: 980px) {
+    .weather-tips { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+  @media (max-width: 660px) {
+    .weather-tips { grid-template-columns: 1fr; }
+  }
+</style>

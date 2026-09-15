@@ -1,0 +1,106 @@
+---
+/**
+ * 訪客服務介紹區塊：以類型中立的「設施指南」呈現。
+ * 涵蓋 WC、停車、餐飲、住宿、商超、加油、充電、加水、醫療、ATM 等。
+ */
+import { serviceCategories, type ServiceCategory } from '../data/visitorServices';
+
+interface Props {
+  /** 預設列出全部類型 */
+  show?: ServiceCategory[];
+  /** 是否顯示標題 */
+  showHeading?: boolean;
+  heading?: string;
+  eyebrow?: string;
+}
+
+const {
+  show,
+  showHeading = true,
+  heading = '大坑週邊設施類型指南',
+  eyebrow = 'FACILITIES & SERVICES',
+} = Astro.props;
+
+const orderedCategories: ServiceCategory[] = [
+  'restroom',
+  'parking',
+  'dining',
+  'lodging',
+  'grocery',
+  'fuel',
+  'charging',
+  'water',
+  'medical',
+  'atm',
+];
+
+const categories = (show && show.length > 0
+  ? orderedCategories.filter((key) => show.includes(key))
+  : orderedCategories
+).map((key) => ({ key, ...serviceCategories[key] }));
+---
+
+{showHeading && (
+  <header class="services-head">
+    <p class="eyebrow">{eyebrow}</p>
+    <h2>{heading}</h2>
+    <p>以下列出大坑風景區週邊常見的「設施類型」與尋找方式。本網站為非營利科普站台，不推薦任何特定店家或品牌；具體店家建議於 Google Maps 上以類型為關鍵字搜尋。</p>
+  </header>
+)}
+
+<div class="services-grid">
+  {categories.map((cat) => (
+    <article class:list={["service-card", cat.essential && "service-card--essential"]}>
+      <header>
+        <h3>{cat.label}</h3>
+        {cat.helper && <p class="service-helper">{cat.helper}</p>}
+      </header>
+      <ul class="service-types">
+        {cat.types.map((t) => (
+          <li>
+            <strong>{t.label}</strong>
+            <span>{t.hint}</span>
+          </li>
+        ))}
+      </ul>
+      <div class="service-where">
+        <h4>常見位置</h4>
+        <ul>
+          {cat.whereToLook.map((item) => <li>{item}</li>)}
+        </ul>
+      </div>
+      <div class="service-tips">
+        <h4>遊客建議</h4>
+        <ul>
+          {cat.tips.map((tip) => <li>{tip}</li>)}
+        </ul>
+      </div>
+    </article>
+  ))}
+</div>
+<p class="services-foot">本網站不評論或推薦特定商家。請以 Google Maps 搜尋「類型 + 大坑」或「類型 + 北屯區」得到最新資訊。</p>
+
+<style>
+  .services-head { max-width: 880px; margin: 0 auto 36px; }
+  .services-head h2 { font-family: Georgia, serif; color: var(--forest, #173f35); font-size: clamp(1.7rem, 3vw, 2.4rem); margin: 12px 0 18px; line-height: 1.2; }
+  .services-head p { color: var(--muted, #65706b); line-height: 1.85; }
+  .eyebrow { color: var(--wood, #b96f3b); font-weight: 700; letter-spacing: 0.18em; font-size: 0.78rem; }
+
+  .services-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 20px; }
+  .service-card { padding: 26px; border-radius: 16px; background: #fcfaf5; border: 1px solid rgba(23,63,53,.1); display: flex; flex-direction: column; gap: 16px; }
+  .service-card--essential { border-color: var(--wood, #b96f3b); background: #fcf4e8; }
+  .service-card h3 { font-family: Georgia, serif; font-size: 1.2rem; color: var(--forest, #173f35); margin: 0; }
+  .service-helper { color: var(--muted, #65706b); font-size: 0.84rem; margin: 4px 0 0; }
+
+  .service-types, .service-where ul, .service-tips ul { margin: 0; padding: 0; list-style: none; }
+  .service-types li { padding: 10px 0; border-bottom: 1px dashed rgba(23,63,53,.16); }
+  .service-types li:last-child { border-bottom: 0; }
+  .service-types strong { display: block; color: var(--forest, #173f35); font-size: 0.94rem; margin-bottom: 4px; }
+  .service-types span { color: var(--muted, #65706b); font-size: 0.82rem; line-height: 1.7; }
+
+  .service-where h4, .service-tips h4 { font-size: 0.78rem; text-transform: uppercase; color: var(--wood-dark, #8b4f2a); letter-spacing: 0.16em; margin: 0 0 10px; }
+
+  .service-where ul li, .service-tips ul li { padding: 4px 0; color: #394841; font-size: 0.88rem; line-height: 1.75; }
+
+  .services-foot { margin: 28px 0 0; text-align: center; color: var(--muted, #65706b); font-size: 0.82rem; }
+</style>

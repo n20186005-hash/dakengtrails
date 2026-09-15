@@ -1,0 +1,110 @@
+---
+/**
+ * 歷史／故事／傳說區塊
+ * 整合自 history.ts；包含時代背景、地質事件與地方傳說
+ */
+import { historyEntries, localLegends, geologicalEvents } from '../data/history';
+
+interface Props {
+  showHeading?: boolean;
+  heading?: string;
+  eyebrow?: string;
+  body?: string;
+  showLegends?: boolean;
+  showGeology?: boolean;
+}
+
+const {
+  showHeading = true,
+  heading = '歷史背景、故事與地名由來',
+  eyebrow = 'HISTORY · LEGENDS · GEOLOGY',
+  body = '本區整理可在公開資料中找到脈絡的歷史背景、921 大地震後整修建置、以及居民口中的山靈故事。網站係非營利科普性質，整理自長期可查之公開資料。',
+  showLegends = true,
+  showGeology = true,
+} = Astro.props;
+---
+
+{showHeading && (
+  <header class="history-head">
+    <p class="eyebrow">{eyebrow}</p>
+    <h2>{heading}</h2>
+    <p>{body}</p>
+  </header>
+)}
+
+<section class="history-timeline">
+  <h3>時代沿革</h3>
+  <ol>
+    {historyEntries.map((entry) => (
+      <li>
+        <span class="history-era">{entry.era}</span>
+        <div>
+          <h4>{entry.title}</h4>
+          <p>{entry.body}</p>
+          {entry.sourceNote && <small>{entry.sourceNote}</small>}
+        </div>
+      </li>
+    ))}
+  </ol>
+</section>
+
+{showGeology && (
+  <section class="history-events">
+    <h3>近年地質與氣象大事</h3>
+    <ol>
+      {geologicalEvents.map((event) => (
+        <li>
+          <strong class="history-date">{event.date}</strong>
+          <div>
+            <h4>{event.title}</h4>
+            <p>{event.detail}</p>
+          </div>
+        </li>
+      ))}
+    </ol>
+  </section>
+)}
+
+{showLegends && (
+  <section class="history-legends">
+    <h3>地名與地方傳說</h3>
+    <div class="history-legend-grid">
+      {localLegends.map((legend) => (
+        <article>
+          <h4>{legend.title}</h4>
+          <p>{legend.body}</p>
+        </article>
+      ))}
+    </div>
+  </section>
+)}
+
+<style>
+  .history-head { max-width: 880px; margin: 0 auto 36px; }
+  .history-head h2 { font-family: Georgia, serif; color: var(--forest, #173f35); font-size: clamp(1.7rem, 3vw, 2.4rem); margin: 12px 0 14px; line-height: 1.2; }
+  .history-head p { color: var(--muted, #65706b); line-height: 1.85; }
+  .eyebrow { color: var(--wood, #b96f3b); font-weight: 700; letter-spacing: 0.18em; font-size: 0.78rem; }
+
+  .history-timeline, .history-events, .history-legends { padding: 28px; border-radius: 18px; background: #fcfaf5; border: 1px solid rgba(23,63,53,.1); margin-bottom: 24px; }
+  .history-timeline h3, .history-events h3, .history-legends h3 { font-family: Georgia, serif; color: var(--forest, #173f35); font-size: 1.25rem; margin: 0 0 16px; }
+
+  .history-timeline ol { list-style: none; margin: 0; padding: 0; position: relative; padding-left: 12px; }
+  .history-timeline ol::before { content: ''; position: absolute; left: 6px; top: 0; bottom: 12px; width: 2px; background: linear-gradient(180deg, transparent, var(--wood, #b96f3b) 18%, var(--wood, #b96f3b) 82%, transparent); }
+  .history-timeline li { position: relative; padding: 12px 0 18px 28px; }
+  .history-timeline li::before { content: ''; position: absolute; left: 0; top: 22px; width: 14px; height: 14px; border-radius: 50%; background: var(--wood, #b96f3b); border: 3px solid #fcfaf5; box-shadow: 0 0 0 1px var(--wood, #b96f3b); }
+  .history-era { display: block; color: var(--wood-dark, #8b4f2a); font-size: 0.78rem; letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 4px; }
+  .history-timeline h4 { margin: 0; color: var(--forest, #173f35); font-family: Georgia, serif; font-size: 1.05rem; }
+  .history-timeline p { color: #394841; line-height: 1.85; margin: 8px 0 4px; font-size: 0.94rem; }
+  .history-timeline small { color: var(--muted, #65706b); font-size: 0.78rem; font-style: italic; }
+
+  .history-events ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 14px; }
+  .history-events li { display: grid; grid-template-columns: 124px 1fr; gap: 16px; padding: 14px 16px; border-radius: 10px; background: #f3efe5; align-items: start; }
+  .history-date { color: var(--wood-dark, #8b4f2a); font-family: Georgia, serif; }
+  .history-events h4 { margin: 0; color: var(--forest, #173f35); font-family: Georgia, serif; font-size: 1.05rem; }
+  .history-events p { color: #394841; line-height: 1.75; margin: 6px 0 0; font-size: 0.92rem; }
+
+  .history-legend-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
+  .history-legends article { padding: 16px 18px; border-radius: 12px; background: #fcf4e8; border-left: 4px solid var(--wood, #b96f3b); }
+  .history-legends h4 { margin: 0; color: var(--forest, #173f35); font-family: Georgia, serif; font-size: 1.05rem; }
+  .history-legends p { color: #394841; line-height: 1.85; margin: 8px 0 0; font-size: 0.9rem; }
+</style>

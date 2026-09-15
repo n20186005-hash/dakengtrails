@@ -1,0 +1,274 @@
+---
+/**
+ * 智能建議天氣面板（依氣象與景點類型輸出結構化建議）
+ * - 對訪客輸出：風險提醒、出行穿搭、遊玩安排、隨身物品
+ * - 風險置頂紅色；三標籤分區；動態渲染（無建議就不顯示）
+ */
+import type { WeatherBundle } from '../lib/weather';
+import { buildAdvice, terrain } from '../lib/weather';
+
+interface Props {
+  bundle: WeatherBundle | null;
+  showHeader?: boolean;
+  variant?: 'full' | 'compact';
+}
+
+const { bundle, showHeader = true, variant = 'full' } = Astro.props;
+
+const todayLabel = (dateIso: string) => {
+  const d = new Date(`${dateIso}T00:00:00+08:00`);
+  return `${d.getMonth() + 1}/${d.getDate()}`;
+};
+
+const iconForCode = (code: number, isDay: boolean) => {
+  if ([0, 1].includes(code)) return isDay ? '☀' : '☾';
+  if (code === 2) return '⛅';
+  if (code === 3) return '☁';
+  if ([45, 48].includes(code)) return '≋';
+  if ([51, 53, 55, 56, 57, 61, 63, 65, 66, 67].includes(code)) return '☂';
+  if ([71, 73, 75, 77, 85, 86].includes(code)) return '❄';
+  if ([80, 81, 82].includes(code)) return '☔';
+  if ([95, 96, 99].includes(code)) return '⚡';
+  return '·';
+};
+
+const windLabel = (kmh: number) => {
+  if (kmh >= 50) return `${Math.round(kmh)} km/h · 強陣風`;
+  if (kmh >= 30) return `${Math.round(kmh)} km/h · 大風`;
+  if (kmh >= 20) return `${Math.round(kmh)} km/h · 微風以上`;
+  return `${kmh.toFixed(1)} km/h · 平穩`;
+};
+
+const uvLabel = (uv: number) => {
+  if (uv >= 8) return `${uv.toFixed(1)} · 強`;
+  if (uv >= 6) return `${uv.toFixed(1)} · 偏強`;
+  if (uv >= 3) return `${uv.toFixed(1)} · 中等`;
+  return `${uv.toFixed(1)} · 溫和`;
+};
+---
+
+{bundle ? (
+  <section class:list={["weather-panel", `weather-panel--${variant}`]} aria-label="即時氣象與未來七日預報">
+    {showHeader && (
+      <header class="weather-panel-head">
+        <p class="eyebrow">NOW · NEXT 7 DAYS</p>
+        <h2>{bundle.location.label}<br /><em>即時氣象 · 智能建議 · 七日預報</em></h2>
+        <p class="weather-panel-sub">資料更新：{new Date(bundle.current.updatedAt).toLocaleString('zh-TW', { hour12: false, timeZone: 'Asia/Taipei' })}</p>
+      </header>
+    )}
+
+    {(() => {
+      const today = bundle.daily[0];
+      const tomorrow = bundle.daily[1] ?? null;
+      const advice = buildAdvice(bundle.current, today, tomorrow, terrain);
+      const rainChance = Math.max(
+        today.precipitationProbabilityMax,
+        bundle.current.precipitation >= 0.2 ? 80 : 0,
+      );
+      return (
+        <div class="weather-board">
+          {/* ---------- 基础天气卡片 ---------- */}
+          <section class="weather-current">
+            <div class="weather-current-temp">
+              <span class="temperature">{Math.round(bundle.current.temperature)}<small>°C</small></span>
+              <p class="weather-condition">{bundle.current.weatherLabel}</p>
+              <p class="weather-feels">體感 {Math.round(bundle.current.apparentTemperature)}°C</p>
+            </div>
+            <dl class="weather-current-facts">
+              <div>
+                <dt>降雨機率</dt>
+                <dd>{rainChance}%</dd>
+              </div>
+              <div>
+                <dt>本日雨量</dt>
+                <dd>{today.precipitationSum.toFixed(1)} mm</dd>
+              </div>
+              <div>
+                <dt>今日風速</dt>
+                <dd>{windLabel(today.windMax)}</dd>
+              </div>
+              <div>
+                <dt>紫外線</dt>
+                <dd>{uvLabel(today.uvMax)}</dd>
+              </div>
+              <div>
+                <dt>氣溫區間</dt>
+                <dd>{Math.round(today.lowC)}°–{Math.round(today.highC)}°C</dd>
+              </div>
+              <div>
+                <dt>相對濕度</dt>
+                <dd>{bundle.current.humidity}%</dd>
+              </div>
+            </dl>
+          </section>
+
+          {/* ---------- 風險提醒（紅色置頂，僅有風險時顯示） ---------- */}
+          {advice.risks.length > 0 && (
+            <section class="weather-block weather-risk" aria-label="風險提醒">
+              <header class="weather-block-head">
+                <span class="weather-block-icon" aria-hidden="true">⚠</span>
+                <h3>風險提醒</h3>
+              </header>
+              <ul>
+                {advice.risks.map((risk) => <li>{risk}</li>)}
+              </ul>
+            </section>
+          )}
+
+          {/* ---------- 三標籤分區 ---------- */}
+          <section class="weather-three-cols" aria-label="智能建議分區">
+            {advice.outfit.length > 0 && (
+              <div class="weather-block weather-block--outfit">
+                <header class="weather-block-head">
+                  <span class="weather-block-icon" aria-hidden="true">🧥</span>
+                  <h3>出行穿搭</h3>
+                </header>
+                <ul>
+                  {advice.outfit.map((line) => <li>{line}</li>)}
+                </ul>
+              </div>
+            )}
+            {advice.itinerary.length > 0 && (
+              <div class="weather-block weather-block--itinerary">
+                <header class="weather-block-head">
+                  <span class="weather-block-icon" aria-hidden="true">🗺</span>
+                  <h3>遊玩安排</h3>
+                </header>
+                <ul>
+                  {advice.itinerary.map((line) => <li>{line}</li>)}
+                </ul>
+              </div>
+            )}
+            {advice.gear.length > 0 && (
+              <div class="weather-block weather-block--gear">
+                <header class="weather-block-head">
+                  <span class="weather-block-icon" aria-hidden="true">🎒</span>
+                  <h3>隨身物品</h3>
+                </header>
+                <ul>
+                  {advice.gear.map((line) => <li>{line}</li>)}
+                </ul>
+              </div>
+            )}
+          </section>
+
+          {/* ---------- 一句話總結 ---------- */}
+          <p class="weather-headline">{advice.headline}</p>
+
+          {/* ---------- 七日預報 ---------- */}
+          <section class="weather-daily-section" aria-label="未來七日預報">
+            <header class="weather-daily-head">
+              <p class="eyebrow">NEXT 7 DAYS</p>
+              <h3>未來七日</h3>
+            </header>
+            <ol class="weather-daily">
+              {bundle.daily.map((day, index) => (
+                <li class:list={["weather-day", index === 0 && "weather-day--today"]}>
+                  <span class="weather-day-weekday">{day.weekday}</span>
+                  <span class="weather-day-date">{todayLabel(day.date)}</span>
+                  <span class="weather-day-icon" aria-hidden="true">{iconForCode(day.weatherCode, bundle.current.isDay)}</span>
+                  <span class="weather-day-condition">{day.weatherLabel}</span>
+                  <span class="weather-day-temp"><strong>{Math.round(day.highC)}°</strong><i>{Math.round(day.lowC)}°</i></span>
+                  <span class="weather-day-rain">💧 {day.precipitationProbabilityMax}%</span>
+                </li>
+              ))}
+            </ol>
+          </section>
+
+          <p class="weather-foot">本頁資料由第三方氣象服務提供，作為行程前的參考；正式預報與警特報以<a href="https://www.cwb.gov.tw" target="_blank" rel="noopener noreferrer">中央氣象署</a>公告為準。</p>
+        </div>
+      );
+    })()}
+  </section>
+) : (
+  <section class="weather-panel weather-panel--empty">
+    <h2>氣象資料暫時無法取得</h2>
+    <p>網路或資料來源正在調整中，請稍候再試。出發前可先查看<a href="https://www.cwb.gov.tw" target="_blank" rel="noopener noreferrer">中央氣象署</a>的最新資訊。</p>
+  </section>
+)}
+
+<style>
+  .weather-panel {
+    padding: 60px 0;
+    background: linear-gradient(180deg, #f3efe5 0%, #fcf9f1 100%);
+  }
+  .weather-panel--compact { padding: 30px 24px; border-radius: 18px; background: #fcfaf5; border: 1px solid rgba(23,63,53,.1); }
+  .weather-panel-head { max-width: 720px; margin: 0 auto 28px; padding: 0 22px; text-align: center; }
+  .weather-panel-head h2 { font-family: Georgia, serif; color: var(--forest, #173f35); font-size: clamp(1.6rem, 3vw, 2.2rem); margin: 12px 0 8px; line-height: 1.2; }
+  .weather-panel-head em { color: var(--wood, #b96f3b); font-style: italic; font-weight: 500; }
+  .weather-panel-sub { color: var(--muted, #65706b); font-size: 0.85rem; margin: 4px 0 0; }
+  .eyebrow { color: var(--wood, #b96f3b); font-weight: 700; letter-spacing: 0.18em; font-size: 0.78rem; }
+
+  .weather-board { max-width: 1180px; margin: 0 auto; padding: 0 22px; display: flex; flex-direction: column; gap: 20px; }
+
+  /* 基础天气卡片 */
+  .weather-current { display: grid; grid-template-columns: minmax(220px, 1fr) 2fr; gap: 28px; padding: 26px 30px; background: var(--forest, #173f35); color: #fcfaf5; border-radius: 18px; }
+  .weather-current-temp { display: flex; flex-direction: column; gap: 6px; }
+  .temperature { font-family: Georgia, serif; font-size: clamp(3rem, 6vw, 4.6rem); line-height: 1; font-weight: 600; color: #fcfaf5; }
+  .temperature small { font-size: 1.4rem; color: #e8ae4f; margin-left: 6px; }
+  .weather-condition { color: #f0d49a; font-size: 1.05rem; margin: 4px 0 0; font-weight: 600; }
+  .weather-feels { color: #d8e1dc; font-size: 0.85rem; margin: 0; }
+  .weather-current-facts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px 28px; align-self: center; margin: 0; padding: 0; }
+  .weather-current-facts dt { color: #d8e1dc; font-size: 0.78rem; }
+  .weather-current-facts dd { color: #fcfaf5; font-size: 1.05rem; font-weight: 600; margin: 0; line-height: 1.3; }
+
+  /* 通用區塊 */
+  .weather-block { padding: 22px 24px; border-radius: 16px; background: #fff; border: 1px solid rgba(23,63,53,.1); }
+  .weather-block-head { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+  .weather-block-icon { font-size: 1.4rem; }
+  .weather-block-head h3 { font-family: Georgia, serif; margin: 0; color: var(--forest, #173f35); font-size: 1.15rem; }
+  .weather-block ul { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; }
+  .weather-block li { color: #394841; line-height: 1.8; font-size: 0.94rem; padding-left: 18px; position: relative; }
+  .weather-block li::before { content: '•'; color: var(--wood, #b96f3b); position: absolute; left: 0; top: 0; font-weight: 700; }
+
+  /* 風險提醒紅色置頂 */
+  .weather-risk { border-color: #c14b3a; background: linear-gradient(180deg, #fce2dd 0%, #fff5f2 100%); }
+  .weather-risk .weather-block-head h3 { color: #b94c2c; }
+  .weather-risk li { color: #8b2e1f; }
+  .weather-risk li::before { color: #c14b3a; content: '⚠'; }
+
+  /* 三標籤分區 */
+  .weather-three-cols { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .weather-block--outfit { background: #eef4f8; border-color: #b1c7d6; }
+  .weather-block--itinerary { background: #f6efe2; border-color: #e1cf9c; }
+  .weather-block--gear { background: #ecf2e7; border-color: #b3c69e; }
+
+  /* 一句話總結 */
+  .weather-headline { margin: 0; padding: 14px 22px; border-radius: 12px; background: #fcfaf5; border: 1px solid rgba(23,63,53,.08); color: var(--forest, #173f35); font-size: 0.95rem; font-weight: 600; line-height: 1.7; }
+
+  /* 七日預報 */
+  .weather-daily-section { padding: 24px; border-radius: 18px; background: #fcfaf5; border: 1px solid rgba(23,63,53,.1); }
+  .weather-daily-head { display: flex; align-items: baseline; gap: 14px; margin-bottom: 16px; }
+  .weather-daily-head h3 { margin: 0; font-family: Georgia, serif; color: var(--forest, #173f35); font-size: 1.2rem; }
+  .weather-daily { display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px; list-style: none; padding: 0; margin: 0; }
+  .weather-day { display: grid; gap: 6px; padding: 14px 10px; border-radius: 12px; background: #fff; border: 1px solid rgba(23,63,53,.08); text-align: center; }
+  .weather-day--today { border-color: var(--wood, #b96f3b); box-shadow: 0 0 0 3px rgba(185,111,59,.18); }
+  .weather-day-weekday { font-weight: 700; color: var(--forest, #173f35); font-size: 0.92rem; }
+  .weather-day-date { color: var(--muted, #65706b); font-size: 0.78rem; }
+  .weather-day-icon { font-size: 1.6rem; line-height: 1; }
+  .weather-day-condition { color: var(--muted, #65706b); font-size: 0.78rem; min-height: 1.6em; }
+  .weather-day-temp { font-size: 0.92rem; }
+  .weather-day-temp strong { color: var(--forest, #173f35); }
+  .weather-day-temp i { color: var(--muted, #65706b); font-style: normal; }
+  .weather-day-rain { color: #4a6b87; font-size: 0.74rem; }
+
+  /* Foot note */
+  .weather-foot { max-width: 1180px; margin: 16px auto 0; padding: 0 22px; color: var(--muted, #65706b); font-size: 0.82rem; }
+  .weather-foot a { color: var(--wood-dark, #8b4f2a); font-weight: 700; border-bottom: 1px solid currentColor; }
+
+  /* Empty */
+  .weather-panel--empty { padding: 50px 28px; text-align: center; background: #fcfaf5; }
+  .weather-panel--empty h2 { margin: 0 0 14px; color: var(--forest, #173f35); font-family: Georgia, serif; }
+  .weather-panel--empty a { color: var(--wood-dark, #8b4f2a); font-weight: 700; }
+
+  @media (max-width: 980px) {
+    .weather-current { grid-template-columns: 1fr; }
+    .weather-current-facts { grid-template-columns: repeat(3, 1fr); }
+    .weather-daily { grid-template-columns: repeat(4, 1fr); }
+    .weather-three-cols { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 660px) {
+    .weather-current-facts { grid-template-columns: repeat(2, 1fr); }
+    .weather-daily { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>

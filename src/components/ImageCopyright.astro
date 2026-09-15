@@ -1,0 +1,94 @@
+---
+/**
+ * 圖片版權宣告：依使用者需求新增「本網站所展示的所有圖片產權及版權
+ * 均歸原攝影者所有」的提示文字，並與授權條款連結。
+ */
+import { photos } from '../data/sources';
+
+interface Props {
+  /** 自訂標題 */
+  title?: string;
+  /** 自訂內文（用於特殊版本） */
+  body?: string;
+  /** 是否顯示授權照片清單摘要 */
+  showList?: boolean;
+}
+
+const {
+  title = '圖片版權與授權',
+  body = '本網站所展示的所有圖片產權及版權均歸原攝影者所有。站內圖片皆使用 CC BY 3.0 或同等開源授權，並標明原始檔連結與授權條款；如需使用請依原始授權要求標示原作者與來源連結。',
+  showList = true,
+} = Astro.props;
+---
+
+<aside class="image-copyright" aria-label={title}>
+  <h3>{title}</h3>
+  <p>{body}</p>
+  {showList && (
+    <ul>
+      {photos.map((photo) => (
+        <li>
+          <span>{photo.alt}</span>
+          <a href={photo.url} target="_blank" rel="license noopener noreferrer">原始檔 ↗</a>
+        </li>
+      ))}
+    </ul>
+  )}
+  <p class="image-copyright-foot">攝影：lienyuan lee · CC BY 3.0 · 完整授權收錄於<a href="/sources/">圖片與資料來源</a>。</p>
+</aside>
+
+<style>
+  .image-copyright {
+    margin: 26px 0 0;
+    padding: 24px 28px;
+    border-left: 4px solid var(--wood, #b96f3b);
+    border-radius: 0 14px 14px 0;
+    background: #ede7da;
+  }
+  .image-copyright h3 {
+    margin: 0 0 10px;
+    color: var(--forest, #173f35);
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 1.2rem;
+  }
+  .image-copyright p {
+    margin: 0 0 14px;
+    color: #394841;
+    font-size: 0.92rem;
+    line-height: 1.8;
+  }
+  .image-copyright ul {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px 16px;
+    margin: 0 0 14px;
+    padding: 0;
+    list-style: none;
+  }
+  .image-copyright li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 14px;
+    border-radius: 10px;
+    background: #faf5e9;
+    font-size: 0.85rem;
+  }
+  .image-copyright li a {
+    color: var(--wood-dark, #8b4f2a);
+    font-weight: 760;
+    font-size: 0.78rem;
+    border-bottom: 1px solid currentColor;
+  }
+  .image-copyright-foot {
+    margin: 12px 0 0 !important;
+    font-size: 0.78rem !important;
+    color: var(--muted, #65706b) !important;
+  }
+  .image-copyright-foot a { color: var(--wood-dark, #8b4f2a); }
+
+  @media (max-width: 660px) {
+    .image-copyright ul { grid-template-columns: 1fr; }
+  }
+</style>

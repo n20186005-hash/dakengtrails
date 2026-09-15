@@ -1,0 +1,98 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import VisitorServices from '../components/VisitorServices.astro';
+import { attraction } from '../data/attraction';
+
+export const prerender = true;
+
+const title = `訪客服務與週邊設施類型指南 - ${attraction.fullName}`;
+const description = `${attraction.fullName}週邊常見設施類型指南：公共廁所（WC）、停車、餐飲、住宿、商超、加油、電動車充電、加水、醫療、ATM；以「類型」描述，不推薦特定商家。`;
+
+const faq = [
+  ['大坑有公共廁所嗎？', '部分登山口、休息站與商圈設有公共廁所，開放時間因管理單位而異；建議出發前前往，不要依賴山區。'],
+  ['可以推嬰兒車上步道嗎？', '大坑主要步道多為階梯與木棧道，不建議推嬰兒車；可改為周邊商圈與緩坡區散步。'],
+  ['電動車有充電站嗎？', '鄰近停車場與商場地下層多附設充電樁，建議以充電地圖 APP 出發前查詢。'],
+  ['山上能加水嗎？', '部分登山口與廟宇有飲水機，建議出發前先裝滿 800–1500 ml 飲水。'],
+  ['下山後哪裡補給？', '大坑商圈與東山路沿線有小吃、茶飲、便利商店等類型店家，可依個人需求選擇。'],
+];
+
+const breadcrumb = [
+  { label: '首頁', href: '/' },
+  { label: '訪客服務與週邊設施' },
+];
+
+const breadcrumbSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: breadcrumb.map((crumb, index) => ({
+    '@type': 'ListItem',
+    position: index + 1,
+    name: crumb.label,
+    item: index === 0 ? `https://${attraction.domain}/` : `https://${attraction.domain}/facilities/`,
+  })),
+};
+---
+
+<BaseLayout title={title} description={description} breadcrumbs={breadcrumb} schema={breadcrumbSchema} faqPage={faq}>
+  <section class="page-hero">
+    <div class="shell">
+      <p class="eyebrow">FACILITIES · GUIDE</p>
+      <h1>{attraction.fullName}<br /><em>週邊設施類型指南</em></h1>
+      <p>健行前後需要的不只是路線與飲水，更需要清楚的「設施動線」：廁所在哪裡、停車容不容易、下山後哪裡能補給。本頁整理大坑週邊的設施類型與尋找方式，並標示對無障礙、親子、長輩、電動車主等使用者的建議。</p>
+      <p>本網站為非營利科普站台：僅列出「類型」與「常見位置」的客觀介紹，不評論或推薦任何特定店家或品牌。具體地點請透過 Google Maps 以「類型 + 大坑」或「類型 + 北屯區」搜尋最新資訊。</p>
+    </div>
+  </section>
+
+  <section class="content-section">
+    <div class="shell">
+      <VisitorServices />
+    </div>
+  </section>
+
+  <section class="content-section alt">
+    <div class="shell">
+      <p class="eyebrow">FACILITY CHECKLIST</p>
+      <h2>五項出門前檢核</h2>
+      <ol class="checklist">
+        <li><strong>飲水</strong>先裝滿 800–1500 ml。山上不一定有飲水機。</li>
+        <li><strong>裝備</strong>防滑鞋、登山襪、雨衣、頭燈、防曬帽。</li>
+        <li><strong>藥品</strong>個人慢箋藥、外傷包、防蚊液。</li>
+        <li><strong>電力</strong>行動電源與備用電池，避免聯絡中斷。</li>
+        <li><strong>聯絡</strong>行程與緊急聯絡人同步留給親友。</li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="content-section">
+    <div class="shell">
+      <p class="eyebrow">FAQ · FACILITIES</p>
+      <h2>常見的設施問題</h2>
+      <div class="faq-list">
+        {faq.map(([q, a]) => (
+          <details>
+            <summary>{q}</summary>
+            <div>{a}</div>
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .page-hero { padding: 80px 0 30px; background: linear-gradient(180deg, #fcfaf5 0%, #f3efe5 100%); }
+  .page-hero h1 { font-family: Georgia, serif; color: var(--forest, #173f35); font-size: clamp(2rem, 4vw, 3rem); font-weight: 500; line-height: 1.1; margin: 14px 0 22px; }
+  .page-hero em { color: var(--wood, #b96f3b); font-style: italic; font-weight: 500; }
+  .page-hero p { color: var(--muted, #65706b); max-width: 720px; line-height: 1.9; }
+  .shell { max-width: 1200px; margin: 0 auto; padding: 0 22px; }
+  .eyebrow { color: var(--wood, #b96f3b); font-weight: 700; letter-spacing: 0.18em; font-size: 0.78rem; }
+
+  .content-section { padding: 60px 0; }
+  .content-section.alt { background: #f3efe5; }
+  .content-section h2 { font-family: Georgia, serif; color: var(--forest, #173f35); font-size: clamp(1.6rem, 3vw, 2.2rem); margin: 12px 0 24px; }
+  .checklist { padding-left: 1.2em; color: #394841; line-height: 1.95; font-size: 0.95rem; }
+  .checklist strong { color: var(--forest, #173f35); margin-right: 6px; }
+  .faq-list details { padding: 14px 18px; border-bottom: 1px solid rgba(23,63,53,.1); }
+  .faq-list summary { font-weight: 700; color: var(--forest, #173f35); cursor: pointer; padding: 4px 0; }
+  .faq-list div { color: var(--muted, #65706b); line-height: 1.85; padding: 10px 0 0; }
+</style>

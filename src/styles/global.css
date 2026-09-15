@@ -57,7 +57,7 @@ button, a, summary { -webkit-tap-highlight-color: transparent; }
 .brand strong, .brand small { display: block; }
 .brand strong { font-family: Georgia, "Times New Roman", serif; font-size: 1.05rem; letter-spacing: .01em; }
 .brand small { margin-top: 2px; color: var(--muted); font-size: .72rem; letter-spacing: .12em; }
-.desktop-nav { display: flex; align-items: center; gap: 22px; margin-left: auto; }
+.desktop-nav { display: flex; align-items: center; gap: 22px; margin-left: auto; flex-wrap: wrap; justify-content: flex-end; }
 .desktop-nav a { position: relative; padding-block: 27px 24px; color: #384640; font-size: .88rem; font-weight: 720; white-space: nowrap; }
 .desktop-nav a::after { content: ""; position: absolute; left: 0; right: 100%; bottom: 16px; height: 2px; background: var(--wood); transition: right .2s; }
 .desktop-nav a:hover::after, .desktop-nav a.active::after { right: 0; }
@@ -662,4 +662,23 @@ button, a, summary { -webkit-tap-highlight-color: transparent; }
   .route-detail-hero { padding: 65px 0; }
   .nearby-map-link { align-items: flex-start; flex-direction: column; padding: 25px; }
   .faq-page-grid, .source-grid, .source-links { grid-template-columns: 1fr; }
+
+/* New science / outdoors / heritage sections */
+.weather-section { padding: 80px 0; background: #f3efe5; }
+.weather-section .section-heading { margin-bottom: 28px; }
+.seasons-preview,
+.itinerary-preview,
+.facilities-preview,
+.history-preview,
+.responsibility-preview { padding: 80px 0; }
+.seasons-preview { background: #f3efe5; }
+.itinerary-preview { background: #fcfaf5; }
+.facilities-preview { background: #f3efe5; }
+.history-preview { background: #fcfaf5; }
+.responsibility-preview { background: #f3efe5; }
+.section-footer-link { margin: 26px auto 0; text-align: center; }
+.weather-section + .seasons-preview,
+.itinerary-preview + .facilities-preview,
+.facilities-preview + .history-preview,
+.history-preview + .responsibility-preview { margin-top: 0; }
 }
