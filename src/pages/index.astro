@@ -10,10 +10,21 @@ import Itinerary from '../components/Itinerary.astro';
 import VisitorServices from '../components/VisitorServices.astro';
 import HistoryBlock from '../components/HistoryBlock.astro';
 import Responsibility from '../components/Responsibility.astro';
-import { trails } from '../data/trails';
+import { trails, trailStatusAnnouncedAt, trailStatusSource } from '../data/trails';
 import { routeGuides } from '../data/content';
 import { attraction, googleMapsLinks, attractionGeo, attractionPostalAddress } from '../data/attraction';
 import { loadWeather } from '../lib/weather';
+
+const closedTrails = trails.filter((trail) => trail.status.state === 'closed');
+const reopenedTrails = trails.filter((trail) => trail.status.state === 'reopened');
+
+const formatMinutes = (m: number) => {
+  const h = Math.floor(m / 60);
+  const min = m % 60;
+  if (h === 0) return `${min} 分鐘`;
+  if (min === 0) return `${h} 小時`;
+  return `${h} 小時 ${min} 分`;
+};
 
 const title = `${attraction.fullName}（${attraction.city}）- 14條步道比較・停車・地圖導航`;
 const description = `完整收錄 ${attraction.fullName}（${attraction.fullName}）在${attraction.city}${attraction.district}的14條步道：難度比較、入口、停車、大眾運輸與 Google 地圖導航，協助${attraction.fullName}（Dakeng Trails）旅客快速決策。`;
@@ -94,7 +105,7 @@ const homeSchema = [
 
 const homePageFaqs = faqs.map(([question, answer]) => ({ question, answer }));
 
-const trailImageAlt = `${attraction.fullName} - ${trail => trail} 在 ${attraction.city}`;
+const trailImageAlt = `${attraction.fullName} 步道 in ${attraction.city}`;
 ---
 
 <BaseLayout title={title} description={description} schema={homeSchema} faqPage={homePageFaqs}>
@@ -217,6 +228,44 @@ const trailImageAlt = `${attraction.fullName} - ${trail => trail} 在 ${attracti
     </div>
   </section>
 
+  <!-- H2: Trail open status -->
+  <section class="content-section alt trail-status-banner">
+    <div class="shell">
+      <SectionHeading
+        eyebrow="OPEN STATUS"
+        title="大坑步道最新開放狀態"
+        text={`依臺中市政府觀光旅遊網 ${trailStatusAnnouncedAt} 通行公告整理；非即時確認，出發前請以官方公告為準。`}
+      />
+      {closedTrails.length > 0 && (
+        <div class="status-group status-group-closed">
+          <h3><span class="status-pip" aria-hidden="true"></span>暫時封閉</h3>
+          <ul>
+            {closedTrails.map((trail) => (
+              <li>
+                <a href={`/trails/${trail.id}/`}>{trail.id}號</a>
+                <span>{trail.status.note}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+      {reopenedTrails.length > 0 && (
+        <div class="status-group status-group-reopened">
+          <h3><span class="status-pip" aria-hidden="true"></span>近期重新開放</h3>
+          <ul>
+            {reopenedTrails.map((trail) => (
+              <li>
+                <a href={`/trails/${trail.id}/`}>{trail.id}號</a>
+                <span>{trail.status.note}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+      <p class="status-source">資料來源：{trailStatusSource}（{trailStatusAnnouncedAt}）。其餘未列為封閉的步道，請出發前再次確認最新通行情形。</p>
+    </div>
+  </section>
+
   <!-- H2: First-time visitors -->
   <section class="content-section scenarios-section">
     <div class="shell">
@@ -312,7 +361,7 @@ const trailImageAlt = `${attraction.fullName} - ${trail => trail} 在 ${attracti
             <h3>{route.title}</h3>
             <div class="route-line" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
             <p>{route.description}</p>
-            <span class="route-meta">約 {route.minutes / 60} 小時 · {route.trails.map((id) => `${id}號`).join('、')}</span>
+            <span class="route-meta">約 {formatMinutes(route.minutes)} · {route.trails.map((id) => `${id}號`).join('、')}</span>
           </a>
         ))}
       </div>
@@ -477,4 +526,34 @@ const trailImageAlt = `${attraction.fullName} - ${trail => trail} 在 ${attracti
 
     form?.addEventListener('change', updateRecommendations);
   </script>
+
+  <style>
+    .trail-status-banner .status-group { margin: 18px 0; }
+    .trail-status-banner .status-group h3 {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 1.05rem; margin: 0 0 10px; color: #173f35;
+    }
+    .trail-status-banner .status-pip {
+      width: 10px; height: 10px; border-radius: 50%; background: #3a9d6b;
+    }
+    .trail-status-banner .status-group-closed h3 { color: #a33327; }
+    .trail-status-banner .status-group-closed .status-pip { background: #c0392b; }
+    .trail-status-banner .status-group-reopened .status-pip { background: #2e9e6b; }
+    .trail-status-banner .status-group ul {
+      list-style: none; margin: 0; padding: 0; display: grid; gap: 8px;
+    }
+    .trail-status-banner .status-group li {
+      display: flex; flex-wrap: wrap; gap: 6px 12px; align-items: baseline;
+      padding: 10px 14px; border-radius: 12px; background: #fff;
+      border: 1px solid rgba(23, 63, 53, 0.1);
+    }
+    .trail-status-banner .status-group li a {
+      font-weight: 700; color: #1f6f4f; text-decoration: none;
+    }
+    .trail-status-banner .status-group li span { color: #4a5751; font-size: 0.92rem; }
+    .trail-status-banner .status-group-closed li { background: #fbeae7; border-color: rgba(163, 51, 39, 0.18); }
+    .trail-status-banner .status-source {
+      margin-top: 16px; color: #8a938e; font-size: 0.82rem; line-height: 1.7;
+    }
+  </style>
 </BaseLayout>

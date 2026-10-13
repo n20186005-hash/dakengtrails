@@ -4,10 +4,12 @@ import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import PageHero from '../../components/PageHero.astro';
 import TrailCard from '../../components/TrailCard.astro';
 import SectionHeading from '../../components/SectionHeading.astro';
-import { trails } from '../../data/trails';
+import { trails, trailStatusAnnouncedAt, trailStatusSource } from '../../data/trails';
 
-const title = '大坑步道難度比較｜親子、新手與挑戰路線怎麼選';
-const description = '比較大坑14條步道的難度、距離、時間、海拔、路面、遮蔭、親子適合度、停車與大眾運輸，快速選出適合路線。';
+const title = '大坑步道難度比較｜14條路線難易度排行與新手推薦';
+const description = '比較大坑14條步道的難度、距離、時間、海拔、路面、遮蔭、親子適合度、停車與大眾運輸，快速選出適合路線；並標註最新通行狀態。';
+
+const statusLabel: Record<string, string> = { open: '可通行', closed: '暫時封閉', reopened: '已重新開放' };
 ---
 <BaseLayout title={title} description={description}>
   <Breadcrumbs items={[{ label: '步道比較' }]} />
@@ -35,13 +37,14 @@ const description = '比較大坑14條步道的難度、距離、時間、海拔
           </select>
         </div>
         <p>● 為便利度／適合度，5顆代表相對較高；不是安全保證。</p>
+        <p class="compare-status-note">通行狀態依臺中市政府觀光旅遊網 {trailStatusAnnouncedAt} 公告整理，非即時確認；出發前請以官方最新公告為準。</p>
       </div>
       <div class="comparison-table-wrap">
         <table class="comparison-table">
-          <thead><tr><th>步道</th><th>難度</th><th>距離</th><th>時間</th><th>主要路面</th><th>遮蔭</th><th>親子</th><th>停車</th><th>公車</th><th>導航</th></tr></thead>
+          <thead><tr><th>步道</th><th>難度</th><th>距離</th><th>時間</th><th>主要路面</th><th>遮蔭</th><th>親子</th><th>停車</th><th>公車</th><th>狀態</th><th>導航</th></tr></thead>
           <tbody data-compare-body>
             {trails.map((trail, index) => (
-              <tr data-row data-index={index} data-rank={({ 親子: 1, 入門: 2, 中等: 3, 進階: 4, 挑戰: 5 } as Record<string, number>)[trail.difficulty]} data-duration={trail.duration[1]} data-family={trail.family}>
+              <tr data-row data-index={index} data-state={trail.status.state} data-rank={({ 親子: 1, 入門: 2, 中等: 3, 進階: 4, 挑戰: 5 } as Record<string, number>)[trail.difficulty]} data-duration={trail.duration[1]} data-family={trail.family}>
                 <th><a href={`/trails/${trail.id}/`}>{trail.id}號</a></th>
                 <td><span class={`table-difficulty table-${trail.difficulty}`}>{trail.difficulty}</span></td>
                 <td>{trail.distance} km</td>
@@ -51,6 +54,7 @@ const description = '比較大坑14條步道的難度、距離、時間、海拔
                 <td><span class="dots">{'●'.repeat(trail.family)}<i>{'●'.repeat(5 - trail.family)}</i></span></td>
                 <td><span class="dots">{'●'.repeat(trail.parking)}<i>{'●'.repeat(5 - trail.parking)}</i></span></td>
                 <td><span class="dots">{'●'.repeat(trail.transit)}<i>{'●'.repeat(5 - trail.transit)}</i></span></td>
+                <td><span class={`status-badge status-${trail.status.state}`}>{statusLabel[trail.status.state]}</span></td>
                 <td><a class="map-link" href={trail.maps.directions} target="_blank" rel="noopener">開啟 ↗</a></td>
               </tr>
             ))}
@@ -70,6 +74,7 @@ const description = '比較大坑14條步道的難度、距離、時間、海拔
                 <div><dt>親子適合度</dt><dd>{trail.family}／5</dd></div>
                 <div><dt>停車便利度</dt><dd>{trail.parking}／5</dd></div>
                 <div><dt>大眾運輸</dt><dd>{trail.transit}／5</dd></div>
+                <div><dt>通行狀態</dt><dd><span class={`status-badge status-${trail.status.state}`}>{statusLabel[trail.status.state]}</span></dd></div>
               </dl>
               <div class="action-row"><a class="button" href={`/trails/${trail.id}/`}>查看攻略</a><a class="button button-secondary" href={trail.maps.directions} target="_blank" rel="noopener">導航 ↗</a></div>
             </div>
@@ -121,4 +126,17 @@ const description = '比較大坑14條步道的難度、距離、時間、海拔
       sortedRows(mobileRows, mode).forEach((row) => mobile?.append(row));
     });
   </script>
+
+  <style>
+    .status-badge {
+      display: inline-block; padding: 3px 10px; border-radius: 999px;
+      font-size: 0.78rem; font-weight: 700; white-space: nowrap;
+      background: #e6f1ec; color: #173f35; border: 1px solid rgba(23, 63, 53, 0.15);
+    }
+    .status-badge.status-closed { background: #fbeae7; color: #a33327; border-color: rgba(163, 51, 39, 0.2); }
+    .status-badge.status-reopened { background: #e7f4ec; color: #1f6f4f; border-color: rgba(31, 111, 79, 0.2); }
+    [data-row][data-state='closed'] { opacity: 0.72; }
+    [data-row][data-state='closed'] th a { color: #a33327; }
+    .compare-status-note { color: #8a938e; font-size: 0.82rem; margin: 4px 0 0; }
+  </style>
 </BaseLayout>

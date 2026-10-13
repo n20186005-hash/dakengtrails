@@ -73,13 +73,13 @@ export const attraction: Attraction = {
   /**
    * 頁面顯示用評分（同步自 Google 地圖使用者評價）
    * 禁止寫入 JSON-LD，避免冒充官方評分造成違反 Google 政策。
-   * 同步時間：2026 年 9 月。
+   * 同步時間：2026 年 10 月（依上傳資料更新）。
    */
   rating: {
-    score: 4.5,
-    reviewCount: 6058,
-    syncedAt: '2026 年 9 月',
-    syncedAtIso: '2026-09-15',
+    score: 4.3,
+    reviewCount: 28137,
+    syncedAt: '2026 年 10 月',
+    syncedAtIso: '2026-10-13',
   },
   nearbyLandmarks: ['頭嵙山', '經補庫停車場', '大坑商圈'],
 };

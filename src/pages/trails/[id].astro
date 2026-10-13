@@ -4,6 +4,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import TrailCard from '../../components/TrailCard.astro';
 import SectionHeading from '../../components/SectionHeading.astro';
+import TrailStatus from '../../components/TrailStatus.astro';
 import { trails, getTrail } from '../../data/trails';
 
 export function getStaticPaths() {
@@ -11,7 +12,10 @@ export function getStaticPaths() {
 }
 
 const { trail } = Astro.props;
-const title = `大坑${trail.id}號步道攻略｜難度、停車、入口與Google Maps導航`;
+const title =
+  trail.id === '11'
+    ? '大坑11號步道攻略｜南觀音山、登山口、路線圖與停車'
+    : `大坑${trail.id}號步道攻略｜難度、停車、入口與Google Maps導航`;
 const description = `整理${trail.name}難度、約${trail.distance}公里、建議時間${trail.duration[0]}至${trail.duration[1]}分鐘、入口、停車、大眾運輸與Google Maps導航。`;
 const faqs = [
   [`${trail.name}適合第一次去嗎？`, trail.difficulty === '親子' || trail.difficulty === '入門' ? `${trail.name}屬於較容易安排的路線；仍有階梯與坡度，請依同行者體力決定折返點。` : `${trail.name}的${trail.surfaces.join('、')}會提高體力與技巧要求。第一次到大坑若登山經驗少，建議先從9號或9-1號開始。`],
@@ -89,6 +93,18 @@ const schema = [
     </div>
   </section>
 
+  <section class="trail-status-section">
+    <div class="shell">
+      <TrailStatus status={trail.status} />
+      {trail.id === '11' && (
+        <p class="trail-data-note">
+          本頁距離、海拔與難度已依臺中觀光旅遊網公開資料更新（官方將 11 號列為親子級、距離約 1 公里）。
+          實際步行時間會受體力、停留與路況影響，僅供規劃參考，不代表官方測量值。
+        </p>
+      )}
+    </div>
+  </section>
+
   <div class="shell detail-layout">
     <article class="trail-article prose">
       <section>
@@ -135,6 +151,20 @@ const schema = [
           <a class="button" href={trail.maps.place} target="_blank" rel="noopener">開啟步道地點 ↗</a>
           <a class="button button-secondary" href={trail.maps.directions} target="_blank" rel="noopener">規劃開車導航 ↗</a>
         </div>
+        {trail.entrances && trail.entrances.length > 0 && (
+          <div class="entrance-list">
+            <p class="entrance-list-title">分別開啟各入口導航：</p>
+            <ul>
+              {trail.entrances.map((entrance) => (
+                <li>
+                  <a href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(entrance.query)}&travelmode=driving`} target="_blank" rel="noopener">
+                    {entrance.name} ↗
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
       </section>
 
       <section id="parking">
@@ -218,4 +248,23 @@ const schema = [
     <a href="/parking/"><span>Ｐ</span>停車場</a>
     <a href="/compare/"><span>≡</span>路線比較</a>
   </nav>
+
+  <style>
+    .trail-status-section { padding: 0 0 8px; }
+    .trail-status-section .shell { max-width: 1180px; margin: 0 auto; padding: 0 22px; }
+    .trail-data-note {
+      margin: 12px 0 0; padding: 14px 18px; border-radius: 12px;
+      background: #f4f8f6; border: 1px solid rgba(23, 63, 53, 0.12);
+      color: #4a5751; font-size: 0.88rem; line-height: 1.75;
+    }
+    .entrance-list { margin-top: 16px; }
+    .entrance-list-title { font-weight: 700; color: #173f35; margin: 0 0 8px; }
+    .entrance-list ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 10px; }
+    .entrance-list li a {
+      display: inline-block; padding: 8px 14px; border-radius: 999px;
+      background: #eef4f1; color: #1f6f4f; text-decoration: none; font-weight: 600; font-size: 0.9rem;
+      border: 1px solid rgba(31, 111, 79, 0.18);
+    }
+    .entrance-list li a:hover { background: #e0ece6; }
+  </style>
 </BaseLayout>

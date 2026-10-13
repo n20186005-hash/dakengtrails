@@ -5,8 +5,8 @@ import PageHero from '../../components/PageHero.astro';
 import SectionHeading from '../../components/SectionHeading.astro';
 import VisitorServices from '../../components/VisitorServices.astro';
 import { trails } from '../../data/trails';
-const title = '大坑步道停車攻略｜各登山口停車場與Google Maps導航';
-const description = '整理大坑1至11號與支線步道停車便利度、入口步行提醒、經補庫停車場與Google Maps導航，假日前先準備替代方案。';
+const title = '大坑步道停車場攻略｜經補庫停車場與各步道入口導航';
+const description = '整理大坑各登山口停車便利度、入口步行提醒、經補庫停車場位置與Google Maps導航；假日前先準備替代方案。';
 const parkingSorted = [...trails].sort((a, b) => b.parking - a.parking);
 const breadcrumbItems = [{ label: '首頁', href: '/' }, { label: '停車攻略', href: '/parking/' }];
 const faqList = [
@@ -39,6 +39,37 @@ const faqSchema = faqList.map(([question, answer]) => ({ question, answer }));
           <li>不占用農路、轉彎處與居民出入口</li>
           <li>車位不足時直接改走備選步道</li>
         </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="content-section jingbuku-section">
+    <div class="shell">
+      <SectionHeading
+        eyebrow="JINGBUKU PARKING"
+        title="經補庫停車場：大坑最主要的停車與接駁點"
+        text="經補庫停車場位於大坑登山動線核心，距離9號、9-1號登山口最近，也是多數遊客轉乘與補給的起點。"
+      />
+      <div class="jingbuku-grid">
+        <div class="jingbuku-card">
+          <h3>位置與步行</h3>
+          <p>停車場鄰近經補路、廍子路一帶，步行到9號、9-1號登山口約數分鐘；前往11號、10號可再由周邊道路接續。確切步行距離會因當日停車位置與入口選擇而異。</p>
+        </div>
+        <div class="jingbuku-card">
+          <h3>收費與開放</h3>
+          <p>收費方式、營業或開放時間以現場告示與管理單位公告為準；本站立場僅整理動線建議，不代為確認費率。</p>
+        </div>
+        <div class="jingbuku-card">
+          <h3>替代車位</h3>
+          <p>假日熱門時段容易客滿。可改停鄰近入口周邊合法車格，或改搭大眾運輸至松竹站轉乘公車；不要占用農路、轉彎處與居民出入口。</p>
+        </div>
+        <div class="jingbuku-card">
+          <h3>導航與接駁</h3>
+          <p>建議直接以「經補庫停車場」作為導航終點，抵達後再依現場指標步行至目標登山口；回程同路線較好掌握。</p>
+          <div class="action-row">
+            <a class="button" href="https://www.google.com/maps/dir/?api=1&destination=%E7%B6%93%E8%A3%9C%E5%BA%AB%E5%81%9C%E8%BB%8A%E5%A0%B4&travelmode=driving" target="_blank" rel="noopener">規劃前往經補庫 ↗</a>
+          </div>
+        </div>
       </div>
     </div>
   </section>
@@ -86,4 +117,11 @@ const faqSchema = faqList.map(([question, answer]) => ({ question, answer }));
   .faq-list details { padding: 14px 18px; border-bottom: 1px solid rgba(23,63,53,.1); }
   .faq-list summary { font-weight: 700; color: var(--forest, #173f35); cursor: pointer; padding: 4px 0; }
   .faq-list div { color: var(--muted, #65706b); line-height: 1.85; padding: 10px 0 0; }
+  .jingbuku-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; }
+  .jingbuku-card {
+    background: #fff; border: 1px solid rgba(23,63,53,.1); border-radius: 16px; padding: 22px 24px;
+  }
+  .jingbuku-card h3 { margin: 0 0 8px; color: #173f35; font-size: 1.05rem; }
+  .jingbuku-card p { margin: 0 0 12px; color: #4a5751; line-height: 1.8; font-size: 0.95rem; }
+  @media (max-width: 760px) { .jingbuku-grid { grid-template-columns: 1fr; } }
 </style>

@@ -36,6 +36,7 @@ const links = {
         <p class="eyebrow">{attraction.shortName.toUpperCase()}</p>
         <h2>{attraction.fullName}</h2>
         <p>城市近郊登山規劃指南，整合 14 條步道、停車、交通與 Google Maps 導航。</p>
+        <p class="footer-disclaimer">本站為獨立第三方旅遊指南，非大坑風景區官方網站；資訊僅供參考，最新公告與規範請以官方單位為準。</p>
         <p class="footer-address">{attraction.city}{attraction.district} · {attraction.fullName}{attraction.phone ? ` · ${attraction.phone}` : ''}</p>
       </div>
       <nav class="footer-nav">
@@ -93,6 +94,7 @@ const links = {
   .footer-brand h2 { font-family: Georgia, serif; font-size: 1.6rem; color: #fcfaf5; margin: 6px 0 14px; }
   .footer-brand p { color: #b8c4be; font-size: 0.92rem; line-height: 1.7; margin: 6px 0; max-width: 320px; }
   .footer-address { font-size: 0.84rem !important; color: #90a098 !important; }
+  .footer-disclaimer { font-size: 0.8rem !important; color: #e8ae4f; max-width: 360px; margin: 10px 0 4px !important; line-height: 1.6; }
   .footer-nav { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; }
   .footer-nav h3 { color: #fcfaf5; font-size: 0.96rem; margin: 0 0 14px; }
   .footer-nav ul { margin: 0; padding: 0; list-style: none; }

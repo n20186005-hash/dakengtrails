@@ -1,0 +1,92 @@
+---
+import type { TrailStatus, TrailState } from '../data/trails';
+import { trailStatusAnnouncedAt, trailStatusSource } from '../data/trails';
+
+interface Props {
+  status: TrailStatus;
+  /** 是否只顯示徽章（用於卡片） */
+  compact?: boolean;
+  /** 是否顯示「依公告整理」的全局說明（頁面級用 false 時由父層統一顯示） */
+  showSource?: boolean;
+}
+const { status, compact = false, showSource = true } = Astro.props;
+
+const labelMap: Record<TrailState, string> = {
+  open: '可通行',
+  closed: '暫時封閉',
+  reopened: '已重新開放',
+};
+const className = `trail-status trail-status-${status.state}`;
+---
+
+{
+  compact ? (
+    <span class={className} aria-label={labelMap[status.state]}>
+      <span class="trail-status-dot" aria-hidden="true" />
+      {labelMap[status.state]}
+    </span>
+  ) : (
+    <div class={className} role="note">
+      <span class="trail-status-badge">
+        <span class="trail-status-dot" aria-hidden="true" />
+        {labelMap[status.state]}
+      </span>
+      <p class="trail-status-note">{status.note}</p>
+      {showSource && (
+        <p class="trail-status-source">
+          依 {trailStatusSource}（{trailStatusAnnouncedAt}）整理；非即時確認，出發前請以官方公告為準。
+        </p>
+      )}
+    </div>
+  )
+}
+
+<style>
+  .trail-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.9rem;
+    color: #173f35;
+  }
+  .trail-status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 5px 12px;
+    border-radius: 999px;
+    font-weight: 700;
+    font-size: 0.86rem;
+    background: #e6f1ec;
+    color: #173f35;
+    border: 1px solid rgba(23, 63, 53, 0.15);
+  }
+  .trail-status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #3a9d6b;
+  }
+  .trail-status-closed { color: #a33327; }
+  .trail-status-closed .trail-status-badge,
+  .trail-status-closed.trail-status {
+    background: #fbeae7;
+    color: #a33327;
+    border-color: rgba(163, 51, 39, 0.2);
+  }
+  .trail-status-closed .trail-status-dot { background: #c0392b; }
+  .trail-status-reopened { color: #1f6f4f; }
+  .trail-status-reopened .trail-status-dot { background: #2e9e6b; }
+
+  .trail-status-note {
+    margin: 8px 0 0;
+    color: #4a5751;
+    line-height: 1.7;
+    font-size: 0.92rem;
+  }
+  .trail-status-source {
+    margin: 6px 0 0;
+    color: #8a938e;
+    font-size: 0.8rem;
+  }
+</style>

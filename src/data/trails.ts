@@ -1,5 +1,15 @@
 export type Difficulty = '親子' | '入門' | '中等' | '進階' | '挑戰';
 
+/**
+ * 步道通行狀態：依臺中市政府觀光旅遊網 2026-09-22 步道通行公告整理。
+ * 這是「最近一次核對」的狀態，並非即時確認；出發前仍請以官方公告為準。
+ */
+export type TrailState = 'open' | 'closed' | 'reopened';
+export type TrailStatus = { state: TrailState; note: string };
+
+export const trailStatusAnnouncedAt = '2026 年 9 月 22 日';
+export const trailStatusSource = '臺中市政府觀光旅遊網步道通行公告';
+
 type TrailBase = {
   id: string;
   name: string;
@@ -26,17 +36,21 @@ type TrailBase = {
   transportNote: string;
   routeSteps: string[];
   related: string[];
+  /** 通行狀態（預設可通行；封閉／重新開放以 statusOverrides 修正） */
+  status?: TrailStatus;
+  /** 多個已核實入口／地標，用於分別提供導航（取代單一泛用地點搜尋） */
+  entrances?: { name: string; query: string }[];
 };
 
-const maps = (id: string) => {
-  const query = encodeURIComponent(`大坑${id}號登山步道`);
+const mapsFor = (id: string, entranceQuery?: string) => {
+  const query = encodeURIComponent(entranceQuery ?? `大坑${id}號登山步道`);
   return {
     place: `https://www.google.com/maps/search/?api=1&query=${query}`,
     directions: `https://www.google.com/maps/dir/?api=1&destination=${query}&travelmode=driving`,
   };
 };
 
-export type Trail = TrailBase & { maps: ReturnType<typeof maps> };
+export type Trail = TrailBase & { maps: ReturnType<typeof mapsFor>; status: TrailStatus };
 
 const rawTrails: TrailBase[] = [
   {
@@ -221,37 +235,63 @@ const rawTrails: TrailBase[] = [
   },
   {
     id: '10', name: '大坑10號步道', short: '城市近郊的入門健走',
-    verdict: '適合新手、朋友與日常運動，路線時間容易掌握，大眾運輸相對方便。',
+    verdict: '適合新手、朋友與日常運動，路線時間容易掌握，大眾運輸相對方便；終點的雙層觀景台是主要亮點。',
     difficulty: '入門', distance: 1.2, duration: [50, 90], elevation: [170, 310], routeType: '往返／可組合',
-    surfaces: ['階梯', '一般步道', '木棧道'], suitable: ['新手', '朋友同行', '一般健走'], features: ['城市景觀', '林蔭', '交通方便'],
+    surfaces: ['階梯', '一般步道', '木棧道'], suitable: ['新手', '朋友同行', '一般健走'], features: ['城市景觀', '林蔭', '交通方便', '360 度觀景台'],
     shade: '中等', parking: 4, transit: 4, family: 4, image: '/images/trails/dakeng-3.jpg',
     imageAlt: '大坑步道旁的山林與石階路面',
-    reasons: ['市區出發較方便', '難度與時間適中', '可與9號周邊安排同日行程'],
-    caution: '部分路段較曝曬，夏季應避開正午並備足飲水。',
-    access: '導航至10號登山步道，注意不要把9號入口當成同一處。',
-    parkingNote: '周邊停車較便利，但仍以合法停車格與現場告示為準。',
+    reasons: ['經補路一帶入口辨識容易', '終點雙層觀景台可遠眺臺中市區', '可與9號、6號彈性銜接'],
+    caution: '部分路段較曝曬，夏季應避開正午並備足飲水；觀景台階梯多，長輩與幼兒請放慢。',
+    access: '導航至「大坑10號步道」或經補路一帶登山口；不要把9號入口當成同一處，兩者相距不遠但仍要依現場指標。',
+    parkingNote: '周邊停車較便利，可優先考慮經補庫周邊車位；仍以合法停車格與現場告示為準。',
     transportNote: '可從松竹站一帶轉乘往大坑公車，是無車旅客可考慮的路線。',
-    routeSteps: ['入口', '前段階梯', '林間路段', '城市展望', '折返或銜接'],
+    routeSteps: ['經補路登山口', '前段階梯', '林間路段', '雙層觀景台（城市展望）', '原路折返或接9號／6號'],
     related: ['9', '9-1', '11'],
   },
   {
-    id: '11', name: '大坑11號步道', short: '新興路線與城市山景',
-    verdict: '適合一般健行者與希望避開高難度圓木路線的人，仍需保留基本爬坡體力。',
-    difficulty: '中等', distance: 1.2, duration: [60, 100], elevation: [185, 335], routeType: '往返／可組合',
-    surfaces: ['階梯', '一般步道'], suitable: ['一般健行者', '朋友同行'], features: ['城市景觀', '短程', '山林'],
-    shade: '中等', parking: 3, transit: 3, family: 3, image: '/images/trails/dakeng-5.jpg',
+    id: '11', name: '大坑11號步道', short: '親子級短線與城市山景',
+    verdict: '官方列為親子級路線，距離短、坡度和緩，適合親子、長輩與初次造訪者；沿途可連結玉佛寺、南觀音山等地標。',
+    difficulty: '親子', distance: 1.0, duration: [45, 75], elevation: [190, 318], routeType: '往返／可組合',
+    surfaces: ['階梯', '一般步道'], suitable: ['親子', '長輩', '新手', '朋友同行'], features: ['城市景觀', '短程', '山林', '玉佛寺', '南觀音山'],
+    shade: '中等', parking: 3, transit: 3, family: 5, image: '/images/trails/dakeng-5.jpg',
     imageAlt: '大坑林間步道的木階、岩石與濃密植被',
-    reasons: ['距離適中', '避開高難度圓木挑戰', '適合安排日常健走'],
-    caution: '部分階梯與坡度仍需要體力，雨後岩面與落葉可能濕滑。',
-    access: '導航到11號步道具體入口，到場後依現場指示確認是否有施工或管制。',
-    parkingNote: '入口停車條件視現場而定，請預留步行與改停其他合法位置的時間。',
-    transportNote: '可用公車接近大坑地區，但需依即時路線規劃最後一段步行。',
-    routeSteps: ['入口', '階梯上升', '林蔭段', '觀景休息', '原路返回'],
+    reasons: ['官方列為親子級、距離僅約1公里', '可串連玉佛寺、南觀音山等在地地標', '避開高難度圓木挑戰、坡度和緩'],
+    caution: '雖為親子級，仍有階梯與坡度；雨後岩面與落葉可能濕滑，幼兒與長輩請放慢並依體力折返。',
+    access: '11號有多個入口：可由經補路或廍子路一帶進入，也能從玉佛寺、南觀音山方向接上。導航請指定具體入口或地標，到場後依現場指標確認。',
+    parkingNote: '入口停車條件視現場而定，經補路、廍子路一帶車位較多；請預留步行與改停其他合法位置的時間。',
+    transportNote: '可用公車接近大坑地區，再依即時路線規劃最後一段步行前往指定入口。',
+    routeSteps: ['經補路或廍子路一帶入口', '玉佛寺方向', '南觀音山稜線', '中臺科技大學周邊', '原路返回'],
+    entrances: [
+      { name: '玉佛寺口', query: '大坑11號步道 玉佛寺' },
+      { name: '廍子路口', query: '大坑11號步道 廍子路' },
+      { name: '南觀音山', query: '南觀音山 大坑' },
+    ],
     related: ['10', '9', '8'],
   },
 ];
 
-export const trails: Trail[] = rawTrails.map((trail) => ({ ...trail, maps: maps(trail.id) }));
+/**
+ * 通行狀態修正：依臺中市政府觀光旅遊網 2026-09-22 步道通行公告。
+ * 未列入者視為可通行（open），但仍以官方最新公告為準。
+ */
+const defaultStatus: TrailStatus = {
+  state: 'open',
+  note: '依 2026-09-22 公告整理，未列為封閉；出發前請再次確認最新通行情形。',
+};
+const statusOverrides: Record<string, TrailStatus> = {
+  '2': { state: 'closed', note: '預計 2026 年 11 月 30 日重新開放（依 2026-09-22 公告）。' },
+  '3': { state: 'closed', note: '預計 2026 年 10 月 20 日重新開放（依 2026-09-22 公告）。' },
+  '3-1': { state: 'closed', note: '因落石封閉，開放時間未定（依 2026-09-22 公告）。' },
+  '5': { state: 'reopened', note: '已於 2026 年 9 月 21 日重新開放（依 2026-09-22 公告）。' },
+  '10': { state: 'reopened', note: '已於 2026 年 8 月 30 日重新開放（依 2026-09-22 公告）。' },
+  '11': { state: 'reopened', note: '已於 2026 年 8 月 30 日重新開放（依 2026-09-22 公告）。' },
+};
+
+export const trails: Trail[] = rawTrails.map((trail) => ({
+  ...trail,
+  status: statusOverrides[trail.id] ?? defaultStatus,
+  maps: mapsFor(trail.id, trail.entrances?.[0]?.query),
+}));
 
 export const getTrail = (id: string) => trails.find((trail) => trail.id === id);
 
