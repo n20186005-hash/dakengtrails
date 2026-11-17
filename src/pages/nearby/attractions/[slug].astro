@@ -9,7 +9,8 @@ export function getStaticPaths() {
 }
 const { place } = Astro.props;
 const mapUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(place.mapQuery)}`;
-const directionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(place.slug === 'fengdongshi-park' ? '大坑6號步道停車場' : place.mapQuery)}`;
+const directionsTarget = place.slug === 'fengdongshi-park' ? '大坑6號步道停車場' : place.slug === 'yufu-temple' ? '中臺科技大學 台中' : place.mapQuery;
+const directionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(directionsTarget)}`;
 const schema = [
   { '@context': 'https://schema.org', '@type': 'TouristAttraction', name: place.name, alternateName: place.en,
     description: place.intro, image: `https://dakengtrails.com${place.image}`, hasMap: mapUrl,
