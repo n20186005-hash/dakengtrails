@@ -23,11 +23,16 @@ const schema = [
     <div><p class="eyebrow">NEARBY ATTRACTION · TAICHUNG</p><h1>{place.name}</h1><p>{place.tagline}</p><p>{place.en} · {place.type} · 建議停留 {place.duration}</p><p class="hero-practical">遊客評價：<a href={mapUrl} target="_blank" rel="noopener">於 Google 地圖查看即時評分</a>　｜　開放資訊：以現場公告為準</p><div class="action-row"><a class="button" href={mapUrl} target="_blank" rel="noopener">查看景點地點 ↗</a><a class="button button-secondary" href={directionsUrl} target="_blank" rel="noopener">規劃交通 ↗</a></div></div>
     <figure><img src={place.image} alt={place.imageAlt} width="1280" height="960" fetchpriority="high" /><figcaption>{place.name}實景照片</figcaption></figure>
   </div></section>
+  <section class="content-section management-section"><article class="shell prose article-prose">
+    <p class="eyebrow">ABOUT &amp; MANAGEMENT</p>
+    <h2>關於{place.name}</h2>
+    <p class="management-intro">{place.about}</p>
+    <p><strong>管理與維護：</strong>{place.manager}。不同設施的維護及臨時管制可能分屬不同單位，遊覽時請依現場公告。</p>
+  </article></section>
   <section class="content-section"><article class="shell prose article-prose">
     <h2>探索{place.name}</h2><p>{place.intro}</p>
     <h3>遊覽建議</h3><ul>{place.tips.map((tip) => <li>{tip}</li>)}</ul>
     <h3>景區特色</h3><ul>{place.highlights.map((highlight) => <li>{highlight}</li>)}</ul>
-    <h2>關於{place.name} · 管理主體</h2><p>{place.about}</p><p>公共管理資訊：{place.manager}。遊覽時請遵守現場設施與步道公告。</p>
   </article></section>
   <section class="content-section alt"><article class="shell prose article-prose">
     <h2>基本資料</h2><dl class="nearby-facts"><div><dt>名稱</dt><dd>{place.name} / {place.en}</dd></div><div><dt>景點類型</dt><dd>{place.type}</dd></div><div><dt>所在地與地圖地址</dt><dd>{place.area} · <a href={mapUrl} target="_blank" rel="noopener">以景點名稱定位</a></dd></div><div><dt>公共管理資訊</dt><dd>{place.manager}</dd></div><div><dt>建議停留</dt><dd>{place.duration}</dd></div><div><dt>到訪方式</dt><dd>{place.access}</dd></div></dl>
@@ -60,6 +65,8 @@ const schema = [
   .nearby-facts dt { font-size:.82rem; color:#68766e; }
   .nearby-facts dd { margin:5px 0 0; font-weight:600; }
   .hero-practical { padding:.6rem 0; font-size:.94rem; }
+  .management-section { background:#edf4eb; border-block:1px solid rgba(23,63,53,.12); }
+  .management-intro { font-size:1.075rem; line-height:1.9; }
   .route-steps li { padding-bottom:.45rem; }
   @media(max-width:680px) { .nearby-facts { grid-template-columns:1fr; } }
 </style>
