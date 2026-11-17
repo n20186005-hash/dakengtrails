@@ -11,6 +11,10 @@ export const routeGuides = [
 ];
 
 export const guides = [
+  { slug: 'jingbuku-parking', title: '經補庫停車場攻略｜位置、9號與9-1號入口', description: '經補庫停車場地址、Google Maps、9號與9-1號步道動線、公車站、替代停車及假日停車提醒。' },
+  { slug: 'trail-7-parking', title: '大坑7號步道停車場與登山口', description: '從6號停車場找到7號登山口，認識建成巷、風動石公園、原路折返與6號步道銜接。' },
+  { slug: 'trail-8-parking', title: '大坑8號步道停車場與登山口', description: '8號步道建成巷入口、6號停車場步行路線、風動石公園以及6、7號環線注意事項。' },
+  { slug: 'trail-route-map', title: '大坑步道路線圖｜14條步道入口與串走', description: '官方登山步道圖、14條路線入口導航、6至8號與9至10號步道組合、停車及回程規劃。' },
   { slug: 'trail-difficulty', title: '大坑步道難易度怎麼選？', description: '比較親子、入門、中等、進階與挑戰路線，解讀圓木階梯、爬升、時間與回程難度；附各步道獨立攻略。' },
   { slug: 'trail-10-duration', title: '大坑10號步道要走多久？', description: '從10號步道建議時間、入口與停車、路面難度、折返節奏到9號及9-1號比較，規劃實際健行時間。' },
   { slug: 'what-to-bring', title: '大坑步道行前準備', description: '鞋子、飲水、防曬、防蚊、離線資訊與折返時間，一次整理出發前真正需要的項目。' },

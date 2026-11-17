@@ -11,6 +11,52 @@ export function getStaticPaths() {
 }
 const { guide } = Astro.props;
 const guideContent: Record<string, { lead: string; sections: [string, string][]; picks: string[] }> = {
+  'jingbuku-parking': {
+    lead: '經補庫停車場是走大坑9號、9-1號步道常用的起點，不等於所有大坑步道的共用入口。先確定步道編號，再從停車場步行前往正確入口。',
+    sections: [
+      ['經補庫停車場在哪裡？', '臺中市政府環保局公開資料列地址為「臺中市北屯區東山路一段378-17號」、座標約24.176720、120.732369。<a href="https://www.google.com/maps/search/?api=1&query=%E5%A4%A7%E5%9D%91%E7%B6%93%E8%A3%9C%E5%BA%AB%E5%81%9C%E8%BB%8A%E5%A0%B4" target="_blank" rel="noopener">開啟經補庫停車場專屬地點 ↗</a>。'],
+      ['停車場開放與收費', '環保局充電站資料標示24小時，但這不等於保證全天有停車位，也不代表即時收費政策；停車規則、車格及充電設備請依現場標示確認。<a href="https://green.epb.taichung.gov.tw/page/stronghold/p03.aspx?city=160&num=2655&pro_kind=2" target="_blank" rel="noopener">查看市府位置資料 ↗</a>。'],
+      ['走9號步道怎麼走？', '由停車場周邊辨識經補路方向，往經補路一段383巷與九九橋方向依指標接近登山口。請勿把停車場入口當成登山步道口；<a href="/trails/9/#entrance">查看9號專頁入口與導航</a>。'],
+      ['走9-1號步道怎麼走？', '9-1號入口同樣在經補路一段383巷一帶；出發前可從大坑地震公園旁轉入經補路，依現場路標分辨9與9-1號方向。<a href="/trails/9-1/#entrance">查看9-1號路線</a>。'],
+      ['搭公車可以抵達嗎？', '臺中市風景區管理所指出「大坑9號步道站」位在東山路與松竹路交叉口附近的經補庫停車場前。班次及路線可能變動，請以當日公車動態為準；<a href="/transport/">大眾運輸安排</a>。'],
+      ['假日沒有車位怎麼辦？', '可查詢大坑地震公園周邊合法車位，或改搭大眾運輸。不把經補庫當作7、8號步道的最近停車場；兩條路線應優先研究6號停車場與建成巷動線。'],
+      ['官方資料', '<a href="https://travel.taichung.gov.tw/zh-tw/experience/hikingtrail/10" target="_blank" rel="noopener">臺中觀光旅遊網9號步道</a>、<a href="https://taichung.travel/zh-tw/experience/hikingtrail/11" target="_blank" rel="noopener">9-1號步道</a>、<a href="https://www.scenic.taichung.gov.tw/863699/post" target="_blank" rel="noopener">風景區管理所交通資訊</a>。資料核對：2026-11-17；動態資訊仍以現場為準。'],
+    ], picks: ['9', '9-1', '10'],
+  },
+  'trail-7-parking': {
+    lead: '7號步道不是從經補庫停車場直接起登。臺中觀光旅遊網指出，多數遊客先到6號步道停車場，再由建成巷一帶找到7號登山口。',
+    sections: [
+      ['7號步道停哪裡？', '建議先查「大坑6號步道停車場」的合法停車空間，再確認7號步道入口。<a href="https://www.google.com/maps/search/?api=1&query=%E5%A4%A7%E5%9D%916%E8%99%9F%E6%AD%A5%E9%81%93%E5%81%9C%E8%BB%8A%E5%A0%B4" target="_blank" rel="noopener">開啟6號停車場地點 ↗</a>。車位是否開放以現場公告為準。'],
+      ['登山口從哪裡進？', '官方路線起點為北屯區建成巷，7號入口在6號步道停車場前方道路附近。步行時依7號步道標誌，不要直接導航到風動石公園當作起點。<a href="https://www.google.com/maps/search/?api=1&query=%E5%A4%A7%E5%9D%917%E8%99%9F%E7%99%BB%E5%B1%B1%E6%AD%A5%E9%81%93%E7%99%BB%E5%B1%B1%E5%8F%A3" target="_blank" rel="noopener">開啟7號登山口搜尋 ↗</a>。'],
+      ['走多久、難度如何？', '臺中觀光旅遊網列7號為親子級，路線長約1.3公里、運動時間約1小時，海拔約227–373公尺。這是官方單線資料；往返、拍照與停車步行時間應另外估算。'],
+      ['路線怎麼走？', '建成巷入口出發，沿較平緩的產業道路、農機道及部分枕木段往風動石公園。到達後可原路折返，或先確認6號步道開放狀態再規劃下山。'],
+      ['假日開車注意', '山區產業道路狹窄，部分路段有交通管制或單行安排，不要為了靠近觀音亭而駛入不熟悉的農路；避免擋住居民與農務動線。'],
+      ['官方來源與路況', '<a href="https://travel.taichung.gov.tw/zh-tw/experience/hikingtrail/8" target="_blank" rel="noopener">臺中觀光旅遊網7號步道</a>。內容核對：2026-11-17；<a href="https://www.scenic.taichung.gov.tw/833821/833844/833845/3040068" target="_blank" rel="noopener">出發當日查看開放公告 ↗</a>。'],
+    ], picks: ['7', '6', '8'],
+  },
+  'trail-8-parking': {
+    lead: '8號步道與7號同屬建成巷、風動石公園周邊的健行路網。找車位時先確認6號停車場，預留走到8號登山口的接駁步行時間。',
+    sections: [
+      ['8號步道停車場在哪？', '臺中市政府觀旅局建議開車遊客使用6號步道停車場，再沿建成巷步行到8號登山口。<a href="https://www.google.com/maps/search/?api=1&query=%E5%A4%A7%E5%9D%916%E8%99%9F%E6%AD%A5%E9%81%93%E5%81%9C%E8%BB%8A%E5%A0%B4" target="_blank" rel="noopener">6號停車場 Google Maps ↗</a>。'],
+      ['停車後要走多久到入口？', '市府2022年路線介紹曾建議沿建成巷步行約15分鐘抵達8號登山口；這是舊公告提供的參考時間，不保證目前路況及每個停車格的實際步行時間。'],
+      ['8號登山口怎麼導航？', '入口在建成巷周邊的產業道路支線，先找8號步道標誌，再核對是否進入正確路線。<a href="https://www.google.com/maps/search/?api=1&query=%E5%A4%A7%E5%9D%918%E8%99%9F%E7%99%BB%E5%B1%B1%E6%AD%A5%E9%81%93%E7%99%BB%E5%B1%B1%E5%8F%A3" target="_blank" rel="noopener">開啟8號登山口搜尋 ↗</a>。'],
+      ['沿途有哪些特色？', '官方介紹8號沿途有產業道路、鐵木步道和相思枕木棧道三種路面型態，終點連接風動石公園。雨後木面濕滑，親子同行也需要放慢下坡速度。'],
+      ['能走6、7、8號環線嗎？', '可在風動石公園視現場開放狀態選擇6號或7號回到停車場，但環線時間不能只取8號單走估計；先核對回程入口與停車位置。'],
+      ['官方來源與路況', '<a href="https://travel.taichung.gov.tw/zh-tw/event/newsdetail/7415" target="_blank" rel="noopener">臺中市政府8號步道親子路線介紹</a>。內容核對：2026-11-17；出發前請檢查<a href="https://www.scenic.taichung.gov.tw/833821/833844/833845/3040068" target="_blank" rel="noopener">當日通行資訊 ↗</a>。'],
+    ], picks: ['8', '7', '6'],
+  },
+  'trail-route-map': {
+    lead: '大坑共有不同入口、停車區與串走路線；地圖不只是看山徑線條，更要找到起登點、下山方向和停車位置。本站整理14條步道的個別導航與常見組合。',
+    sections: [
+      ['哪裡看官方大坑步道路線圖？', '臺中觀光旅遊網提供含登山口、停車場、涼亭與洗手間的<a href="https://travel.taichung.gov.tw/file/1599/" target="_blank" rel="noopener">官方登山健行導覽圖 ↗</a>。可先閱讀圖例，再到本站<a href="/map/">14條步道入口清單</a>分別開啟 Google Maps。'],
+      ['6、7、8號怎麼串走？', '這一組主要經建成巷及6號停車場周邊起登，風動石公園是常見銜接點。可單走7或8號，也可查明6號通行狀態後規劃環線；車子最好停在預計回程可抵達的位置。'],
+      ['9、9-1、10號在哪一區？', '這一組主要從經補路一帶出發，經補庫停車場是重要停車與公車轉乘地標。各線入口仍有差異，不能把停車場位置複製成三條步道的同一個登山口。'],
+      ['1至5號可以照圖直接串嗎？', '高地與圓木路線對腿力及回程判斷要求較高。先確認步道有無封閉、岔路和爬升，避免只根據地圖上的相鄰線段推估時間。'],
+      ['Google Maps 是實際登山軌跡嗎？', '本站地圖連結是位置搜尋或道路導航，不代表可離線使用的正式登山軌跡。山區以官方導覽圖、現場指標和通行公告為主，不要把汽車導航延伸到步道上。'],
+      ['如何安排完整時間？', '把停車與步行到入口、登山、休息、回程和下山後取車都算進行程。先用<a href="/compare/">14條步道難度與時間表</a>縮小選擇，再看<a href="/parking/">停車攻略</a>。'],
+      ['核對來源', '<a href="https://travel.taichung.gov.tw/file/1599/" target="_blank" rel="noopener">臺中官方步道導覽圖</a>及各條官方步道資料；內容核對：2026-11-17。若施工更動，請依最新管理所公告。'],
+    ], picks: ['7', '8', '9'],
+  },
   'trail-difficulty': {
     lead: '大坑步道不能只用公里數判斷難易。圓木間距、連續爬升、路面濕滑與回程下坡，往往比距離更影響體力。',
     sections: [
