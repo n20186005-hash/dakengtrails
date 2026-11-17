@@ -8,7 +8,7 @@ export function getStaticPaths() {
   return nearbyAttractions.map((place) => ({ params: { slug: place.slug }, props: { place } }));
 }
 const { place } = Astro.props;
-const mapUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(place.mapQuery)}`;
+const mapUrl = 'mapUrl' in place && typeof place.mapUrl === 'string' ? place.mapUrl : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(place.mapQuery)}`;
 const directionsTarget = place.slug === 'fengdongshi-park' ? '大坑6號步道停車場' : place.slug === 'yufu-temple' ? '中臺科技大學 台中' : place.mapQuery;
 const directionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(directionsTarget)}`;
 const schema = [
