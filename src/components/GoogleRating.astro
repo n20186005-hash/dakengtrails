@@ -5,7 +5,7 @@
  * 以符合 Google Maps 平台政策與避免冒充官方。
  */
 import type { AttractionRating } from '../data/attraction';
-import { googleMapsLinks, reviewsAttribution } from '../data/attraction';
+import { googleMapsLinks } from '../data/attraction';
 
 interface Props {
   rating: AttractionRating;
@@ -43,7 +43,7 @@ const formattedCount = rating.reviewCount.toLocaleString('en-US');
       {reviewLabel} ↗
     </a>
   </div>
-  <p class="google-rating-summary-caption">{reviewsAttribution.caption}</p>
+  <p class="google-rating-summary-caption">Google 地圖使用者評價摘要，資料同步於 {rating.syncedAt}；評價屬原作者與 Google 地圖，請以來源頁最新資料為準。</p>
 </div>
 
 <style>

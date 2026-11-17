@@ -11,6 +11,8 @@ export const routeGuides = [
 ];
 
 export const guides = [
+  { slug: 'trail-difficulty', title: '大坑步道難易度怎麼選？', description: '比較親子、入門、中等、進階與挑戰路線，解讀圓木階梯、爬升、時間與回程難度；附各步道獨立攻略。' },
+  { slug: 'trail-10-duration', title: '大坑10號步道要走多久？', description: '從10號步道建議時間、入口與停車、路面難度、折返節奏到9號及9-1號比較，規劃實際健行時間。' },
   { slug: 'what-to-bring', title: '大坑步道行前準備', description: '鞋子、飲水、防曬、防蚊、離線資訊與折返時間，一次整理出發前真正需要的項目。' },
   { slug: 'rainy-day', title: '下雨後適合走大坑嗎？', description: '雨後圓木、岩面與落葉會提高滑倒風險；如何判斷是否改期，以及替代安排。' },
   { slug: 'summer-hiking', title: '夏季走大坑的避熱策略', description: '整理夏季走大坑步道的出發時間、補充水分、熱不適辨識與遮蔭路線選擇，避開正午高溫。' },
