@@ -1,0 +1,73 @@
+---
+export const prerender = true;
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../../components/Breadcrumbs.astro';
+import { nearbyAttractions } from '../../../data/nearbyAttractions';
+
+export function getStaticPaths() {
+  return nearbyAttractions.map((place) => ({ params: { slug: place.slug }, props: { place } }));
+}
+const { place } = Astro.props;
+const mapUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(place.mapQuery)}`;
+const directionsTarget = place.slug === 'fengdongshi-park' ? '大坑6號步道停車場' : place.slug === 'yufu-temple' ? '中臺科技大學 台中' : place.mapQuery;
+const directionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(directionsTarget)}`;
+const schema = [
+  { '@context': 'https://schema.org', '@type': 'TouristAttraction', name: place.name, alternateName: place.en,
+    description: place.intro, image: `https://dakengtrails.com${place.image}`, hasMap: mapUrl,
+    address: { '@type': 'PostalAddress', addressLocality: '臺中市北屯區', addressCountry: 'TW', streetAddress: place.area } },
+  { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: place.faq.map(([name, text]) => ({ '@type': 'Question', name, acceptedAnswer: { '@type': 'Answer', text } })) },
+];
+---
+<BaseLayout title={`${place.name}｜歷史、交通、地圖與遊覽攻略`} description={`${place.tagline}。整理${place.name}的管理單位、特色、交通、步行路線、拍攝建議及FAQ。`} image={place.image} schema={schema}>
+  <Breadcrumbs items={[{ label: '周邊玩法', href: '/nearby/' }, { label: '周邊景點', href: '/nearby/attractions/' }, { label: place.name }]} />
+  <section class="article-hero"><div class="shell article-hero-grid">
+    <div><p class="eyebrow">NEARBY ATTRACTION · TAICHUNG</p><h1>{place.name}</h1><p>{place.tagline}</p><p>{place.en} · {place.type} · 建議停留 {place.duration}</p><p class="hero-practical">遊客評價：<a href={mapUrl} target="_blank" rel="noopener">於 Google 地圖查看即時評分</a>　｜　開放資訊：以現場公告為準</p><div class="action-row"><a class="button" href={mapUrl} target="_blank" rel="noopener">查看景點地點 ↗</a><a class="button button-secondary" href={directionsUrl} target="_blank" rel="noopener">規劃交通 ↗</a></div></div>
+    <figure><img src={place.image} alt={place.imageAlt} width="1280" height="960" fetchpriority="high" /><figcaption>{place.name}實景照片</figcaption></figure>
+  </div></section>
+  <section class="content-section management-section"><article class="shell prose article-prose">
+    <p class="eyebrow">ABOUT &amp; MANAGEMENT</p>
+    <h2>關於{place.name}</h2>
+    <p class="management-intro">{place.about}</p>
+    <p><strong>管理與維護：</strong>{place.manager}。不同設施的維護及臨時管制可能分屬不同單位，遊覽時請依現場公告。</p>
+  </article></section>
+  <section class="content-section"><article class="shell prose article-prose">
+    <h2>探索{place.name}</h2><p>{place.intro}</p>
+    <h3>遊覽建議</h3><ul>{place.tips.map((tip) => <li>{tip}</li>)}</ul>
+    <h3>景區特色</h3><ul>{place.highlights.map((highlight) => <li>{highlight}</li>)}</ul>
+  </article></section>
+  <section class="content-section alt"><article class="shell prose article-prose">
+    <h2>基本資料</h2><dl class="nearby-facts"><div><dt>名稱</dt><dd>{place.name} / {place.en}</dd></div><div><dt>景點類型</dt><dd>{place.type}</dd></div><div><dt>所在地與地圖地址</dt><dd>{place.area} · <a href={mapUrl} target="_blank" rel="noopener">以景點名稱定位</a></dd></div><div><dt>公共管理資訊</dt><dd>{place.manager}</dd></div><div><dt>建議停留</dt><dd>{place.duration}</dd></div><div><dt>到訪方式</dt><dd>{place.access}</dd></div></dl>
+    <h2>開放時間</h2><p>{place.opening}</p><p>山區臨時封閉與現場安全措施可能隨天候調整，出發前可查<a href="https://www.tourism.taichung.gov.tw/" target="_blank" rel="noopener">臺中市政府觀光旅遊局公告</a>。</p>
+    <h2>門票價格</h2><p>{place.admission}</p>
+    <h2>交通方式</h2><p>{place.access}</p><p><strong>自駕與停車：</strong>{place.parking}</p><p><strong>公車與轉乘：</strong>可先從<a href="/transport/">大坑大眾運輸攻略</a>查詢東山路沿線路線，再依景點所在地評估步行與登山距離；公車站距離不等於步道入口距離。</p>
+    <h2>發現{place.name}的魅力</h2>
+    <h3>歷史與地方記憶</h3><p>{place.history}</p>
+    <h3>景觀、設施與空間特色</h3><p>{place.design}</p>
+    <h3>文化與社區脈絡</h3><p>{place.culture}</p>
+    <h3>核心體驗與觀察重點</h3><p>{place.experience}</p>
+  </article></section>
+  <section class="content-section"><article class="shell prose article-prose">
+    <h2>建議步行與遊覽路線</h2><p>以下順序可作為首次到訪的半日安排；實際距離、坡度及回程方式應依現場指標調整。</p><ol class="route-steps">{place.route.map((step) => <li>{step}</li>)}</ol>
+    <h2>遊覽須知</h2><ul>{place.tips.map((tip) => <li>{tip}</li>)}</ul><p>若遇強風、豪雨、坡面濕滑或步道封閉，請取消原定路線；可利用<a href="/trail-map/">大坑步道地圖</a>重新規劃替代路段。</p>
+    <h2>推薦拍攝機位</h2><ul>{place.photos.map((photo) => <li>{photo}</li>)}</ul><p>拍攝以不干擾行人與生態為原則，不進入封閉區域。</p>
+    <h2>住宿與用餐安排</h2><p>{place.stay}</p><p>可將這一站安排在大坑健行的同一半日行程，結束後返回東山路或大坑商圈補給。選擇旅宿時建議確認隔天交通、退房時間與登山裝備存放方式。</p>
+    <h2>遊客評價與近期參訪資訊</h2><p>{place.reviews}</p><p>Google 地圖的即時評分、評論數與個別留言可能持續變動，故本站不顯示未同步核對的固定數字。<a href={mapUrl} target="_blank" rel="noopener">查看{place.name}的地圖評價 ↗</a></p>
+    <h2>交通指南：地址與專屬地圖</h2><p><strong>所在地：</strong>{place.area}。這是景點的地理範圍描述，不是臆造的門牌；請以專屬 Google Maps 景點名稱及現場入口牌示核對。</p><p><strong>入口與停車提醒：</strong>{place.parking}</p>
+    <div class="action-row"><a class="button" href={mapUrl} target="_blank" rel="noopener">{place.name} Google Maps ↗</a><a class="button button-secondary" href={directionsUrl} target="_blank" rel="noopener">規劃前往路線 ↗</a></div>
+    <p>搭乘大眾運輸請先查看<a href="/transport/">大坑交通指南</a>；自行開車時請配合<a href="/parking/">步道停車資訊</a>，不占用農路或居民出入口。</p>
+    <h2>常見問題</h2>{place.faq.map(([q, a]) => <section><h3>{q}</h3><p>{a}</p></section>)}
+    <h2>資料來源與照片</h2><p>景點內容核對日期：2026-11-17。歷史與遊客資訊參考：</p><ul>{place.sources.map((url) => <li><a href={url} target="_blank" rel="noopener">臺中市政府相關公開資料 ↗</a></li>)}</ul><p>圖片所示為{place.name}對應的實景，<a href={place.imageSource} target="_blank" rel="noopener">查看圖片來源 ↗</a>。</p>
+    <h2>附近值得同遊</h2><ul>{nearbyAttractions.filter((p) => p.slug !== place.slug).map((p) => <li><a href={`/nearby/attractions/${p.slug}/`}>{p.name}</a></li>)}<li><a href="/trails/">大坑14條登山步道</a></li></ul>
+  </article></section>
+</BaseLayout>
+<style>
+  .nearby-facts { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px; }
+  .nearby-facts div { padding:14px 16px; background:white; border:1px solid rgba(23,63,53,.12); border-radius:12px; }
+  .nearby-facts dt { font-size:.82rem; color:#68766e; }
+  .nearby-facts dd { margin:5px 0 0; font-weight:600; }
+  .hero-practical { padding:.6rem 0; font-size:.94rem; }
+  .management-section { background:#edf4eb; border-block:1px solid rgba(23,63,53,.12); }
+  .management-intro { font-size:1.075rem; line-height:1.9; }
+  .route-steps li { padding-bottom:.45rem; }
+  @media(max-width:680px) { .nearby-facts { grid-template-columns:1fr; } }
+</style>

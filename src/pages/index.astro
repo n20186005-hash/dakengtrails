@@ -12,6 +12,7 @@ import HistoryBlock from '../components/HistoryBlock.astro';
 import Responsibility from '../components/Responsibility.astro';
 import { trails, trailStatusAnnouncedAt, trailStatusSource } from '../data/trails';
 import { routeGuides } from '../data/content';
+import { nearbyAttractions } from '../data/nearbyAttractions';
 import { attraction, googleMapsLinks, attractionGeo, attractionPostalAddress } from '../data/attraction';
 import { loadWeather } from '../lib/weather';
 
@@ -366,6 +367,20 @@ const trailImageAlt = `${attraction.fullName} 步道 in ${attraction.city}`;
         ))}
       </div>
       <div class="section-footer-link"><a class="text-link" href="/routes/">查看全部情境路線 <span aria-hidden="true">→</span></a></div>
+    </div>
+  </section>
+
+  <!-- H2: Preparation -->
+  <section class="content-section alt">
+    <div class="shell">
+      <SectionHeading eyebrow="EXPLORE NEARBY" title="大坑周邊值得同遊的景點" text="登山之外，也能走訪地震教育、山林遊憩和自然生態的真實場域。" />
+      <div class="nearby-grid">
+        {nearbyAttractions.map((place) => <a class="nearby-card" href={`/nearby/attractions/${place.slug}/`}>
+          <img src={place.image} alt={place.imageAlt} width="640" height="480" loading="lazy" style="width:100%;height:180px;object-fit:cover;border-radius:12px;" />
+          <h3>{place.name}</h3><p>{place.tagline}</p><strong>查看景點攻略 →</strong>
+        </a>)}
+      </div>
+      <div class="section-footer-link"><a class="text-link" href="/nearby/attractions/">探索更多周邊景點 →</a></div>
     </div>
   </section>
 

@@ -137,6 +137,7 @@ const schema = [
         <p class="eyebrow">DIFFICULTY</p>
         <h2>實際走起來難不難？</h2>
         <p>{trail.caution}</p>
+        <p>需要跨步道比較？參考<a href="/guides/trail-difficulty/">大坑步道難易度完整指南</a>。{trail.id === '10' && <span>想安排時間，可看<a href="/guides/trail-10-duration/">10號步道要走多久</a>。</span>}</p>
         <div class="surface-box">
           <strong>路面與環境</strong>
           <div class="chip-list">{trail.surfaces.map((surface: string) => <span>{surface}</span>)}<span>遮蔭：{trail.shade}</span></div>
@@ -147,6 +148,7 @@ const schema = [
         <p class="eyebrow">ENTRANCE</p>
         <h2>登山口在哪裡？</h2>
         <p>{trail.access}</p>
+        {(trail.id === '7' || trail.id === '8') && <p><a href={`/guides/trail-${trail.id}-parking/`}>查看{trail.id}號步道停車場與建成巷入口詳解 →</a></p>}
         <div class="action-row">
           <a class="button" href={trail.maps.place} target="_blank" rel="noopener">開啟步道地點 ↗</a>
           <a class="button button-secondary" href={trail.maps.directions} target="_blank" rel="noopener">規劃開車導航 ↗</a>
@@ -171,6 +173,7 @@ const schema = [
         <p class="eyebrow">PARKING</p>
         <h2>停車怎麼安排？</h2>
         <p>{trail.parkingNote}</p>
+        {(trail.id === '9' || trail.id === '9-1') && <p><a href="/guides/jingbuku-parking/">經補庫停車場位置與步行動線 →</a></p>}
         <div class="rating-row"><span>停車便利度</span><strong aria-label={`${trail.parking} 顆星`}>{'●'.repeat(trail.parking)}<i>{'●'.repeat(5 - trail.parking)}</i></strong></div>
         <p><a href="/parking/">查看全部步道停車攻略 →</a></p>
       </section>

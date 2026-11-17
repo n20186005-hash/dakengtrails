@@ -33,7 +33,7 @@ const breadcrumbSchema = {
 };
 ---
 
-<BaseLayout title={title} description={description} breadcrumbs={breadcrumb} schema={breadcrumbSchema} faqPage={faq}>
+<BaseLayout title={title} description={description} breadcrumbs={breadcrumb} schema={breadcrumbSchema} faqPage={faq.map(([question, answer]) => ({ question, answer }))}>
   <section class="page-hero">
     <div class="shell">
       <p class="eyebrow">FACILITIES · GUIDE</p>

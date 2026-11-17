@@ -43,7 +43,7 @@ const weatherSchema = bundle ? {
 } : null;
 ---
 
-<BaseLayout title={title} description={description} breadcrumbs={breadcrumb} schema={weatherSchema} faqPage={faq.map(([q, a]) => ({ question: q, answer: a }))}>
+<BaseLayout title={title} description={description} breadcrumbs={breadcrumb} schema={weatherSchema ?? undefined} faqPage={faq.map(([q, a]) => ({ question: q, answer: a }))}>
   <section class="page-hero">
     <div class="shell">
       <p class="eyebrow">WEATHER · SMART ADVICE</p>

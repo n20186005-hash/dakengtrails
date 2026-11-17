@@ -3,6 +3,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import PageHero from '../../components/PageHero.astro';
 import { nearby } from '../../data/content';
+import { nearbyAttractions } from '../../data/nearbyAttractions';
 const title = '大坑步道周邊玩法｜美食、溫泉與新社景點';
 const description = '整理大坑健行後的美食、溫泉、地震公園、生態園區與新社順遊方向，規劃半日或一日近郊行程。';
 ---
@@ -18,4 +19,5 @@ const description = '整理大坑健行後的美食、溫泉、地震公園、�
       ))}
     </div>
   </section>
+  <section class="content-section alt"><div class="shell"><h2>周邊景點實地指南</h2><div class="nearby-grid">{nearbyAttractions.map((place) => <a class="nearby-card" href={`/nearby/attractions/${place.slug}/`}><img src={place.image} alt={place.imageAlt} width="640" height="480" loading="lazy" style="width:100%;height:180px;object-fit:cover;border-radius:12px;"/><h3>{place.name}</h3><p>{place.tagline}</p><strong>查看詳情 →</strong></a>)}</div></div></section>
 </BaseLayout>
