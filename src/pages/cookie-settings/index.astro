@@ -1,0 +1,44 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import PageHero from '../../components/PageHero.astro';
+---
+<BaseLayout title="Cookie 設定｜大坑風景區" description="管理大坑風景區旅遊指南的 Google Analytics Cookie 同意偏好。" includeAttraction={false}>
+  <Breadcrumbs items={[{label:'Cookie 設定'}]} />
+  <PageHero eyebrow="COOKIE SETTINGS" title="Cookie 設定" description="自行決定是否允許網站分析用途的 Cookie。" compact />
+  <section class="content-section"><article class="shell prose policy-prose">
+    <p><strong>更新日期：2026 年 11 月 17 日</strong></p>
+    <h2>Cookie 與本機儲存</h2><p>Cookie 是網站或第三方服務在瀏覽器保留的小型資料；localStorage 可儲存你的偏好。本站以 localStorage 記住分析選擇，不需要會員帳戶。</p>
+    <h2>必要功能</h2><p>文章與步道篩選不依賴分析 Cookie。Cloudflare 為內容傳遞和安全可能使用必要技術機制；這些不受本站分析選項控制。</p>
+    <h2>分析 Cookie（自選）</h2><p>你同意後本站才載入 Google Analytics 4；拒絕時不載入 GA4。撤回同意後，本站會更新偏好並重新載入頁面，以停止後續分析。已由第三方設置的 Cookie 仍須透過瀏覽器設定刪除。</p>
+    <div class="consent-panel" aria-live="polite"><p><strong>目前選擇：</strong><span id="consent-status">讀取中…</span></p><div class="consent-actions"><button type="button" id="accept-analytics">同意分析</button><button type="button" id="reject-analytics">拒絕／撤回同意</button></div><p id="consent-feedback"></p></div>
+    <h2>第三方地圖</h2><p>部分頁面嵌入 Google Maps，其服務可能自行使用 Cookie，與本站 GA4 偏好分開。你可以不開啟地圖，並透過瀏覽器網站資料設定管理外部服務 Cookie。</p>
+    <h2>清除與聯絡</h2><p>在瀏覽器隱私設定搜尋 dakengtrails.com，可清除 Cookie、localStorage 與快取；清除後偏好恢復「尚未選擇」。詳見<a href="/privacy-policy/">隱私政策</a>，或聯絡 <a href="mailto:laupetter72@gmail.com">laupetter72@gmail.com</a>。</p>
+  </article></section>
+  <script is:inline>
+    (function () {
+      const key = 'dakeng-analytics-consent';
+      const status = document.getElementById('consent-status');
+      const feedback = document.getElementById('consent-feedback');
+      function read() { try { return localStorage.getItem(key); } catch (_) { return null; } }
+      function render() { status.textContent = read() === 'accepted' ? '已同意分析' : read() === 'rejected' ? '已拒絕分析' : '尚未選擇（預設不載入分析）'; }
+      function save(value) {
+        try { localStorage.setItem(key, value); }
+        catch (_) { feedback.textContent = '瀏覽器無法保存設定。請透過瀏覽器設定管理 Cookie。'; return; }
+        render();
+        feedback.textContent = value === 'accepted' ? '已儲存分析同意。' : '已儲存拒絕設定。';
+        window.dispatchEvent(new CustomEvent('dakeng-consent-change', { detail: value }));
+      }
+      document.getElementById('accept-analytics').addEventListener('click', () => save('accepted'));
+      document.getElementById('reject-analytics').addEventListener('click', () => save('rejected'));
+      render();
+    })();
+  </script>
+  <style>
+    .consent-panel{border:1px solid #c8d5cb;background:#f3f7f2;border-radius:14px;padding:20px;margin:24px 0}
+    .consent-actions{display:flex;flex-wrap:wrap;gap:12px}
+    .consent-actions button{padding:12px 18px;border-radius:8px;border:1px solid #1e4b3c;background:#1e4b3c;color:#fff;cursor:pointer;font:inherit;font-weight:700}
+    .consent-actions button+button{background:#fff;color:#1e4b3c}
+    .consent-actions button:focus-visible{outline:3px solid #d7a641;outline-offset:3px}
+  </style>
+</BaseLayout>

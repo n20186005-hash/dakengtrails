@@ -1,0 +1,20 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import PageHero from '../../components/PageHero.astro';
+---
+<BaseLayout title="服務條款｜大坑風景區" description="大坑步道指南的資訊用途、安全責任、外部連結及著作權說明。" includeAttraction={false}>
+  <Breadcrumbs items={[{label:'服務條款'}]} />
+  <PageHero eyebrow="TERMS OF SERVICE" title="服務條款" description="使用步道與旅遊資訊前，請了解資訊用途與現場安全責任。" compact />
+  <section class="content-section"><article class="shell prose policy-prose">
+    <p><strong>更新日期：2026 年 11 月 17 日</strong></p>
+    <h2>1. 使用條款</h2><p>使用本站表示你了解本條款及<a href="/privacy-policy/">隱私政策</a>。如不同意，請停止使用本站。</p>
+    <h2>2. 服務性質</h2><p>本站提供大坑風景區、步道、交通、停車、周邊景點及文化的參考資訊，不提供官方管理、售票、救援或旅遊預訂服務。相關介紹見<a href="/about/">關於本站</a>。</p>
+    <h2>3. 資訊變動與核實</h2><p>步道開放、修繕、路況、氣象、公車、停車及設施可能臨時更改。出發前請查看<a href="https://www.scenic.taichung.gov.tw/" target="_blank" rel="noopener noreferrer">臺中市風景區管理所</a>最新公告，並依現場告示核實。</p>
+    <h2>4. 登山安全責任</h2><p>建議路線、所需時間及難度並非保證。請依自身體力、天候和裝備判斷，留意濕滑、陡坡、落石與豪雨後風險；遇封閉或危險路況請停止前進。</p>
+    <h2>5. 地圖、評價與外部服務</h2><p>Google Maps 的位置、導航及評論由第三方提供，可能存在誤差或更新。外部連結不代表本站與來源機構具有合作、背書或授權關係；外部服務適用其自身條款。</p>
+    <h2>6. 著作權與合理使用</h2><p>本站原創整理文字與設計依適用法律保護。照片、第三方資料及地圖內容權利歸各權利人所有，出處與使用條件詳見<a href="/sources/">圖片與資料來源</a>。展示照片不代表允許任意轉載。</p>
+    <h2>7. 網站可用性與責任</h2><p>你可為個人行程閱讀及分享本站連結，不得惡意干擾服務。本站盡力核對資訊，但不保證所有資料即時、完整或適合每一位旅客；相關責任依實際情況與適用法律處理，不排除法律不得排除的權利。</p>
+    <h2>8. 條款變更與聯絡</h2><p>我們可能因功能及服務調整而修訂條款，並更新本頁日期。錯誤回報與問題請聯絡 <a href="mailto:laupetter72@gmail.com">laupetter72@gmail.com</a>。</p>
+  </article></section>
+</BaseLayout>
