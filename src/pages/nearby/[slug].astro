@@ -1,11 +1,12 @@
 ---
+export const prerender = true;
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import PageHero from '../../components/PageHero.astro';
 import SectionHeading from '../../components/SectionHeading.astro';
 import { nearby } from '../../data/content';
 export function getStaticPaths() {
-  return nearby.map((item) => ({ params: { slug: item.slug }, props: { item } }));
+  return nearby.filter((item) => item.slug !== 'attractions').map((item) => ({ params: { slug: item.slug }, props: { item } }));
 }
 const { item } = Astro.props;
 const detail: Record<string, { lead: string; items: [string, string][]; query: string }> = {

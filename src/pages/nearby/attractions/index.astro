@@ -1,0 +1,12 @@
+---
+export const prerender = true;
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../../components/Breadcrumbs.astro';
+import PageHero from '../../../components/PageHero.astro';
+import { nearbyAttractions } from '../../../data/nearbyAttractions';
+---
+<BaseLayout title="大坑周邊景點｜地震公園、風動石公園與生態園區" description="探索大坑風景區三個真實周邊景點，包含位置、管理單位、歷史、實景照片、交通及步行路線。">
+  <Breadcrumbs items={[{ label:'周邊玩法',href:'/nearby/' },{ label:'周邊景點' }]} />
+  <PageHero eyebrow="EXPLORE DAKENG" title="大坑周邊景點" description="從地震教育、山頂遊憩到生態觀察，依路線與交通挑選適合的一站。" compact />
+  <section class="content-section"><div class="shell nearby-grid">{nearbyAttractions.map((p) => <a class="nearby-card" href={`/nearby/attractions/${p.slug}/`}><img src={p.image} alt={p.imageAlt} loading="lazy" width="640" height="480" style="width:100%;height:190px;object-fit:cover;border-radius:12px;"/><h2>{p.name}</h2><p>{p.tagline}</p><strong>查看景點與交通 →</strong></a>)}</div></section>
+</BaseLayout>

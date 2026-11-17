@@ -1,0 +1,55 @@
+---
+export const prerender = true;
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../../components/Breadcrumbs.astro';
+import { nearbyAttractions } from '../../../data/nearbyAttractions';
+
+export function getStaticPaths() {
+  return nearbyAttractions.map((place) => ({ params: { slug: place.slug }, props: { place } }));
+}
+const { place } = Astro.props;
+const mapUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(place.mapQuery)}`;
+const directionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(place.slug === 'fengdongshi-park' ? '大坑6號步道停車場' : place.mapQuery)}`;
+const schema = [
+  { '@context': 'https://schema.org', '@type': 'TouristAttraction', name: place.name, alternateName: place.en,
+    description: place.intro, image: `https://dakengtrails.com${place.image}`, hasMap: mapUrl,
+    address: { '@type': 'PostalAddress', addressLocality: '臺中市北屯區', addressCountry: 'TW', streetAddress: place.area } },
+  { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: place.faq.map(([name, text]) => ({ '@type': 'Question', name, acceptedAnswer: { '@type': 'Answer', text } })) },
+];
+---
+<BaseLayout title={`${place.name}｜歷史、交通、地圖與遊覽攻略`} description={`${place.tagline}。整理${place.name}的管理單位、特色、交通、步行路線、拍攝建議及FAQ。`} image={place.image} schema={schema}>
+  <Breadcrumbs items={[{ label: '周邊玩法', href: '/nearby/' }, { label: '周邊景點', href: '/nearby/attractions/' }, { label: place.name }]} />
+  <section class="article-hero"><div class="shell article-hero-grid">
+    <div><p class="eyebrow">NEARBY ATTRACTION · TAICHUNG</p><h1>{place.name}</h1><p>{place.tagline}</p><p>{place.en} · {place.type} · 建議停留 {place.duration}</p><div class="action-row"><a class="button" href={mapUrl} target="_blank" rel="noopener">查看景點地點 ↗</a><a class="button button-secondary" href={directionsUrl} target="_blank" rel="noopener">規劃交通 ↗</a></div></div>
+    <figure><img src={place.image} alt={place.imageAlt} width="1280" height="960" fetchpriority="high" /><figcaption>{place.name}實景照片</figcaption></figure>
+  </div></section>
+  <section class="content-section"><article class="shell prose article-prose">
+    <h2>探索{place.name}</h2><p>{place.intro}</p>
+    <h3>遊覽建議</h3><ul>{place.tips.map((tip) => <li>{tip}</li>)}</ul>
+    <h3>景區特色</h3><ul>{place.highlights.map((highlight) => <li>{highlight}</li>)}</ul>
+    <h2>關於{place.name} · 管理主體</h2><p>{place.about}</p>
+  </article></section>
+  <section class="content-section alt"><article class="shell prose article-prose">
+    <h2>基本資料</h2><dl class="nearby-facts"><div><dt>名稱</dt><dd>{place.name} / {place.en}</dd></div><div><dt>景點類型</dt><dd>{place.type}</dd></div><div><dt>所在地</dt><dd>{place.area}</dd></div><div><dt>公共管理資訊</dt><dd>{place.manager}</dd></div><div><dt>建議停留</dt><dd>{place.duration}</dd></div><div><dt>開放與費用</dt><dd>公共區域一般無步道門票；特殊活動、設施及臨時管制請以現場公告為準</dd></div></dl>
+    <h2>歷史與地方記憶</h2><p>{place.history}</p>
+    <h2>景觀、設施與觀察重點</h2><p>{place.design}</p>
+  </article></section>
+  <section class="content-section"><article class="shell prose article-prose">
+    <h2>建議步行與遊覽路線</h2><ol>{place.route.map((step) => <li>{step}</li>)}</ol>
+    <h2>交通方式與地圖</h2><p>所在地：{place.area}。地圖連結使用各景點專屬名稱查詢，並非大坑風景區的統一定位；抵達後以現場指標為準。</p>
+    <div class="action-row"><a class="button" href={mapUrl} target="_blank" rel="noopener">{place.name} Google Maps ↗</a><a class="button button-secondary" href={directionsUrl} target="_blank" rel="noopener">規劃前往路線 ↗</a></div>
+    <p>搭乘大眾運輸請先查看<a href="/transport/">大坑交通指南</a>；自行開車時請配合<a href="/parking/">步道停車資訊</a>，不占用農路或居民出入口。</p>
+    <h2>推薦拍攝機位</h2><ul>{place.photos.map((photo) => <li>{photo}</li>)}</ul><p>拍攝以不干擾行人與生態為原則，不進入封閉區域。</p>
+    <h2>住宿與用餐安排</h2><p>建議將這一站安排在大坑健行的同一半日行程，結束後返回東山路或大坑商圈補給。需要住宿可依隔天交通方式選擇北屯區或臺中市區旅宿，不必為單一短程景點刻意安排山區住宿。</p>
+    <h2>常見問題</h2>{place.faq.map(([q, a]) => <section><h3>{q}</h3><p>{a}</p></section>)}
+    <h2>資料來源與照片</h2><p>景點內容核對日期：2026-11-17。歷史與遊客資訊參考：</p><ul>{place.sources.map((url) => <li><a href={url} target="_blank" rel="noopener">臺中市政府相關公開資料 ↗</a></li>)}</ul><p>圖片所示為{place.name}對應的實景，<a href={place.imageSource} target="_blank" rel="noopener">查看圖片來源 ↗</a>。</p>
+    <h2>附近值得同遊</h2><ul>{nearbyAttractions.filter((p) => p.slug !== place.slug).map((p) => <li><a href={`/nearby/attractions/${p.slug}/`}>{p.name}</a></li>)}<li><a href="/trails/">大坑14條登山步道</a></li></ul>
+  </article></section>
+</BaseLayout>
+<style>
+  .nearby-facts { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px; }
+  .nearby-facts div { padding:14px 16px; background:white; border:1px solid rgba(23,63,53,.12); border-radius:12px; }
+  .nearby-facts dt { font-size:.82rem; color:#68766e; }
+  .nearby-facts dd { margin:5px 0 0; font-weight:600; }
+  @media(max-width:680px) { .nearby-facts { grid-template-columns:1fr; } }
+</style>
