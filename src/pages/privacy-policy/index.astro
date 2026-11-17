@@ -1,0 +1,20 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import PageHero from '../../components/PageHero.astro';
+---
+<BaseLayout title="隱私政策｜大坑風景區" description="大坑風景區旅遊指南的資料處理、分析、地圖服務與隱私說明。" includeAttraction={false}>
+  <Breadcrumbs items={[{label:'隱私政策'}]} />
+  <PageHero eyebrow="PRIVACY POLICY" title="隱私政策" description="我們如何處理瀏覽資料、使用第三方服務，以及讓你管理 Cookie。" compact />
+  <section class="content-section"><article class="shell prose policy-prose">
+    <p><strong>更新日期：2026 年 11 月 17 日</strong></p>
+    <h2>1. 網站性質與範圍</h2><p>Dakeng Trails 是提供大坑風景區、14 條步道及周邊景點資訊的獨立旅遊指南。此政策適用於本站；外部網站另有自身政策。</p>
+    <h2>2. 不需註冊的功能</h2><p>瀏覽文章、比較步道、使用篩選及閱讀路線建議不需建立會員帳戶或提供姓名、電話、電子郵件。本站不提供購物或付款服務。</p>
+    <h2>3. 技術資料與網站安全</h2><p>本站透過 Cloudflare 提供內容及安全防護，服務提供者可能處理 IP 位址、請求時間、瀏覽器資訊及安全紀錄，用以傳遞內容、防止濫用與維護服務。保存及處理受其服務政策約束。</p>
+    <h2>4. 分析服務</h2><p>本站使用 Google Analytics 4（GA4）了解彙總流量，例如頁面瀏覽、裝置類型及來源。只有你在 <a href="/cookie-settings/">Cookie 設定</a>明確同意後，本站才會載入 GA4；尚未選擇或拒絕時不載入。Google 可能依其政策處理分析資料，詳見 <a href="https://policies.google.com/privacy?hl=zh-TW" target="_blank" rel="noopener noreferrer">Google 隱私權政策</a>。</p>
+    <h2>5. 地圖與外部連結</h2><p>部分頁面嵌入 Google Maps；載入地圖時 Google 可能收到裝置及瀏覽技術資訊，與本站分析偏好分開。點擊地圖、公車、政府網站連結後，適用第三方的政策。本站不主動要求你的精確定位權限。</p>
+    <h2>6. 本機儲存與瀏覽器控制</h2><p>本站使用 localStorage 記錄分析同意狀態，方便下次造訪沿用選擇；狀態儲存在你的裝置。瀏覽器也可能保留頁面快取及服務工作者資料，可於網站資料設定清除。</p>
+    <h2>7. 分享、保存及權利</h2><p>本站不販售訪客個人資料。技術資訊可能由 Cloudflare、Google 依各自政策處理，保存期間依相關服務設定與政策而定。你可以拒絕分析、撤回同意或清除瀏覽器網站資料。</p>
+    <h2>8. 更新與聯絡</h2><p>功能或第三方服務變動時，本政策會更新並調整日期。如有隱私疑問或內容更正，請聯絡 <a href="mailto:laupetter72@gmail.com">laupetter72@gmail.com</a>。</p>
+  </article></section>
+</BaseLayout>
